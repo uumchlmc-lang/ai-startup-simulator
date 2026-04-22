@@ -1,0 +1,81 @@
+{
+  "version": "1.0",
+  "saved_at": "2026-04-22T02:07:01.708667",
+  "company": {
+    "id": "7e8b34f7-7719-4ba5-9944-b6e9eb013683",
+    "name": "我的 AI 公司",
+    "cash": 48000.0,
+    "total_earnings": 0.0,
+    "total_expenses": 2000.0,
+    "reputation": 3.0,
+    "day": 1,
+    "office_level": 1,
+    "agents": [
+      {
+        "id": "dbf19d5e-cfcc-4020-a6e5-9354953382fe",
+        "name": "小王",
+        "role": "初级程序员",
+        "level": 1,
+        "efficiency": 40,
+        "creativity": 40,
+        "stability": 70,
+        "satisfaction": 70,
+        "salary": 1000,
+        "status": "idle",
+        "current_project": null,
+        "hired_at": "2026-04-22T02:07:01.708395",
+        "projects_completed": 0,
+        "total_earnings": 0.0
+      },
+      {
+        "id": "ebb911c3-77f0-429c-b8d8-df4c28c4c9ac",
+        "name": "小李",
+        "role": "初级程序员",
+        "level": 1,
+        "efficiency": 40,
+        "creativity": 40,
+        "stability": 70,
+        "satisfaction": 70,
+        "salary": 1000,
+        "status": "idle",
+        "current_project": null,
+        "hired_at": "2026-04-22T02:07:01.708398",
+        "projects_completed": 0,
+        "total_earnings": 0.0
+      }
+    ],
+    "projects": [
+      {
+        "id": "2e2aaa87-bada-4782-b4e7-6f17be2b660d",
+        "name": "网站开发 #cc8c",
+        "type": "网站开发",
+        "description": "",
+        "difficulty": 1,
+        "deadline_days": 7,
+        "days_remaining": 7,
+        "reward": 11741,
+        "progress": 0,
+        "quality": 0,
+        "status": "available",
+        "assigned_agents": [],
+        "client_name": "未知客户",
+        "client_satisfaction": 0,
+        "created_at": "2026-04-22T02:07:01.708406",
+        "started_at": null,
+        "completed_at": null
+      }
+    ],
+    "technologies": [],
+    "projects_completed": 0,
+    "projects_failed": 0,
+    "total_days": 1,
+    "created_at": "2026-04-22T02:07:01.708390",
+    "last_updated": "2026-04-22T02:07:01.708418"
+  },
+  "metadata": {
+    "day": 1,
+    "name": "我的 AI 公司",
+    "cash": 48000.0,
+    "reputation": 3.0
+  }
+}
