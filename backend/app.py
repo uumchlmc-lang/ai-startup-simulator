@@ -2,17 +2,25 @@
 AI 创业模拟器 - Flask 应用入口
 """
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
+import os
+import sys
 
-from .services import get_current_game, reset_game
-from .routes import company_routes, agent_routes, project_routes
+# 添加 backend 到路径
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from services import get_current_game, reset_game
+from routes import company_routes, agent_routes, project_routes
 
 
 def create_app(config: dict = None):
     """创建 Flask 应用"""
     
-    app = Flask(__name__)
+    from flask import send_from_directory
+    import os
+    
+    app = Flask(__name__, static_folder='../frontend', static_url_path='')
     
     # 配置
     if config:
@@ -26,9 +34,14 @@ def create_app(config: dict = None):
     app.register_blueprint(agent_routes.bp, url_prefix="/api/agents")
     app.register_blueprint(project_routes.bp, url_prefix="/api/projects")
     
-    # 根路由
+    # 根路由 - 提供前端页面
     @app.route("/")
     def index():
+        return send_from_directory(app.static_folder, 'index.html')
+    
+    # API 信息
+    @app.route("/api")
+    def api_info():
         return jsonify({
             "name": "AI Startup Simulator API",
             "version": "1.0.0",
@@ -126,4 +139,4 @@ if __name__ == "__main__":
     app = create_app({
         "DEBUG": True,
     })
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5001, debug=True)

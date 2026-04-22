@@ -9,7 +9,10 @@ from pathlib import Path
 from datetime import datetime
 from typing import Optional, List
 
-from ..models import Company
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from models import Company
 
 
 class SaveSystem:

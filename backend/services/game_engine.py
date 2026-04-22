@@ -7,9 +7,13 @@ import random
 from datetime import datetime
 from typing import List, Dict, Optional
 
-from ..models import Company, Agent, Project, create_agent, create_project
-from .event_system import EventSystem
-from .save_system import SaveSystem
+import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from models import Company, Agent, Project, create_agent, create_project
+from services.event_system import EventSystem
+from services.save_system import SaveSystem
 
 
 class GameEngine:

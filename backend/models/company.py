@@ -139,6 +139,12 @@ class Company:
         if project.status != "available":
             return False
         project.start()
+        
+        # 自动分配所有空闲员工到项目
+        for agent in self.agents:
+            if agent.status == "idle":
+                self.assign_agent_to_project(agent.id, project.id)
+        
         return True
     
     def assign_agent_to_project(self, agent_id: str, project_id: str) -> bool:

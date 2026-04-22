@@ -4,7 +4,11 @@
 
 from flask import Blueprint, jsonify, request
 
-from ..services import get_current_game
+import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from services import get_current_game
 
 bp = Blueprint("company", __name__)
 
