@@ -213,6 +213,51 @@ PROJECT_TYPES = {
         "deadline_range": (5, 10),
         "reward_range": (6000, 15000),
     },
+    "电商平台": {
+        "difficulty": 3,
+        "deadline_range": (5, 10),
+        "reward_range": (15000, 40000),
+    },
+    "游戏开发": {
+        "difficulty": 5,
+        "deadline_range": (15, 30),
+        "reward_range": (30000, 100000),
+    },
+    "物联网系统": {
+        "difficulty": 4,
+        "deadline_range": (10, 20),
+        "reward_range": (25000, 60000),
+    },
+    "区块链应用": {
+        "difficulty": 5,
+        "deadline_range": (15, 35),
+        "reward_range": (40000, 120000),
+    },
+    "企业 ERP": {
+        "difficulty": 4,
+        "deadline_range": (12, 25),
+        "reward_range": (30000, 80000),
+    },
+    "CRM 系统": {
+        "difficulty": 3,
+        "deadline_range": (7, 15),
+        "reward_range": (18000, 45000),
+    },
+    "云计算平台": {
+        "difficulty": 5,
+        "deadline_range": (20, 40),
+        "reward_range": (50000, 150000),
+    },
+    "安全审计": {
+        "difficulty": 3,
+        "deadline_range": (5, 12),
+        "reward_range": (12000, 35000),
+    },
+    "技术咨询": {
+        "difficulty": 2,
+        "deadline_range": (2, 5),
+        "reward_range": (5000, 20000),
+    },
 }
 
 

@@ -152,13 +152,28 @@ class Agent:
 
 # Agent 角色配置
 AGENT_ROLES = {
+    # 技术线
     "初级程序员": {"efficiency": 40, "creativity": 40, "stability": 70, "salary": 1000},
     "中级程序员": {"efficiency": 60, "creativity": 60, "stability": 75, "salary": 2000},
     "高级程序员": {"efficiency": 80, "creativity": 75, "stability": 80, "salary": 4000},
     "专家程序员": {"efficiency": 95, "creativity": 90, "stability": 85, "salary": 8000},
+    "架构师": {"efficiency": 90, "creativity": 95, "stability": 90, "salary": 12000},
+    # 设计线
     "设计师": {"efficiency": 60, "creativity": 85, "stability": 70, "salary": 2500},
+    "高级设计师": {"efficiency": 75, "creativity": 95, "stability": 75, "salary": 5000},
+    "UI/UX 专家": {"efficiency": 80, "creativity": 98, "stability": 80, "salary": 9000},
+    # 产品线
     "产品经理": {"efficiency": 70, "creativity": 80, "stability": 75, "salary": 3500},
+    "高级产品经理": {"efficiency": 85, "creativity": 90, "stability": 80, "salary": 7000},
+    # 测试线
     "测试工程师": {"efficiency": 65, "creativity": 50, "stability": 85, "salary": 2000},
+    "测试专家": {"efficiency": 80, "creativity": 60, "stability": 95, "salary": 6000},
+    # 运维线
+    "运维工程师": {"efficiency": 70, "creativity": 55, "stability": 90, "salary": 3000},
+    "DevOps 专家": {"efficiency": 90, "creativity": 70, "stability": 95, "salary": 10000},
+    # 数据线
+    "数据分析师": {"efficiency": 75, "creativity": 70, "stability": 80, "salary": 4000},
+    "AI 工程师": {"efficiency": 85, "creativity": 95, "stability": 75, "salary": 11000},
 }
 
 
