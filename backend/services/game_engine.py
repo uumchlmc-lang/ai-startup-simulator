@@ -123,8 +123,8 @@ class GameEngine:
             return []
         return [a.to_dict() for a in self.company.agents]
     
-    def train_agent(self, agent_id: str) -> dict:
-        """培训 Agent"""
+    def train_agent(self, agent_id: str, training_type: str = "online") -> dict:
+        """培训 Agent (Phase 3.2 增强)"""
         if not self.company:
             return {"error": "No active game"}
         
@@ -132,17 +132,25 @@ class GameEngine:
         if not agent:
             return {"error": "Agent not found"}
         
-        # 培训成本
-        training_cost = agent.salary * 0.5
-        if self.company.cash < training_cost:
-            return {"error": "Not enough cash"}
+        # 培训成本配置
+        TRAINING_COSTS = {
+            "online": 500,
+            "workshop": 1500,
+            "external": 3000,
+            "conference": 5000,
+            "mentor": 8000,
+        }
         
-        self.company.cash -= training_cost
-        leveled_up = agent.train()
+        cost = TRAINING_COSTS.get(training_type, 500)
+        if self.company.cash < cost:
+            return {"error": f"Not enough cash (need ${cost})"}
+        
+        self.company.cash -= cost
+        result = agent.train(training_type, self.company.office_level)
         
         return {
             "success": True,
-            "leveled_up": leveled_up,
+            "result": result,
             "agent": agent.to_dict(),
         }
     

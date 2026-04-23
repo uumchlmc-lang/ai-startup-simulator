@@ -51,14 +51,15 @@ def fire_agent():
 
 @bp.route("/train", methods=["POST"])
 def train_agent():
-    """培训 Agent"""
+    """培训 Agent (Phase 3.2 增强)"""
     data = request.get_json() or {}
     agent_id = data.get("agent_id")
+    training_type = data.get("training_type", "online")  # online/workshop/external/conference/mentor
     
     if not agent_id:
         return jsonify({"error": "Agent ID required"}), 400
     
     game = get_current_game()
-    result = game.train_agent(agent_id)
+    result = game.train_agent(agent_id, training_type)
     
     return jsonify(result)

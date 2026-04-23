@@ -187,7 +187,9 @@ async function updateAgentsList() {
                     <div class="card-row"><span class="card-label">职位:</span><span class="card-value">${agent.role}</span></div>
                     <div class="card-row"><span class="card-label">等级:</span><span class="card-value">Lv${agent.level}</span></div>
                     <div class="card-row"><span class="card-label">效率:</span><span class="card-value">${agent.efficiency}</span></div>
-                    <div class="card-row"><span class="card-label">满意度:</span><span class="card-value">${agent.satisfaction}%</span></div>
+                    <div class="card-row"><span class="card-label">协作:</span><span class="card-value">${agent.collaboration || 50}</span></div>
+                    <div class="card-row"><span class="card-label">技能点:</span><span class="card-value">${agent.skill_points || 0}</span></div>
+                    <div class="card-row"><span class="card-label">羁绊:</span><span class="card-value">${agent.bond_days || 0}天</span></div>
                     <div class="card-row"><span class="card-label">薪资:</span><span class="card-value">$${agent.salary.toLocaleString()}/天</span></div>
                 </div>
             </div>

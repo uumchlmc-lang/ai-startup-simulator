@@ -43,6 +43,9 @@ class Company:
     projects_failed: int = 0
     total_days: int = 0
     
+    # 羁绊系统 (Phase 3.2 新增)
+    bond_days: int = 0  # 羁绊累积天数
+    
     # 时间记录
     created_at: datetime = field(default_factory=datetime.now)
     last_updated: datetime = field(default_factory=datetime.now)
@@ -223,6 +226,11 @@ class Company:
             daily_progress = int(daily_progress * difficulty_penalty)
             
             project.update_progress(daily_progress)
+        
+        # Phase 3.2: 更新羁绊天数
+        self.bond_days += 1
+        for agent in self.agents:
+            agent.bond_days = self.bond_days
         
         # 检查 Agent 离职
         resigned = []

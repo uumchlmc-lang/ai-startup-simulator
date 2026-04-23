@@ -23,9 +23,16 @@ class Agent:
     creativity: int = 50      # 创造力
     stability: int = 80       # 稳定性
     satisfaction: int = 70    # 满意度
+    collaboration: int = 50   # 协作能力 (Phase 3.2 新增)
     
     # 等级 (1-5)
     level: int = 1
+    
+    # 技能点 (Phase 3.2 新增)
+    skill_points: int = 0
+    
+    # 羁绊天数 (Phase 3.2 新增)
+    bond_days: int = 0
     
     # 薪资 (每天)
     salary: int = 1000
@@ -41,9 +48,10 @@ class Agent:
     # 统计数据
     projects_completed: int = 0
     total_earnings: float = 0.0
+    training_days: int = 0  # 培训天数 (Phase 3.2 新增)
     
     def to_dict(self) -> dict:
-        """转换为字典"""
+        """转换为字典 (Phase 3.2 增强)"""
         return {
             "id": self.id,
             "name": self.name,
@@ -53,6 +61,10 @@ class Agent:
             "creativity": self.creativity,
             "stability": self.stability,
             "satisfaction": self.satisfaction,
+            "collaboration": self.collaboration,  # Phase 3.2 新增
+            "skill_points": self.skill_points,  # Phase 3.2 新增
+            "bond_days": self.bond_days,  # Phase 3.2 新增
+            "training_days": self.training_days,  # Phase 3.2 新增
             "salary": self.salary,
             "status": self.status,
             "current_project": self.current_project,
@@ -63,7 +75,7 @@ class Agent:
     
     @classmethod
     def from_dict(cls, data: dict) -> "Agent":
-        """从字典创建"""
+        """从字典创建 (Phase 3.2 增强)"""
         agent = cls()
         agent.id = data.get("id", agent.id)
         agent.name = data.get("name", agent.name)
@@ -73,6 +85,10 @@ class Agent:
         agent.creativity = data.get("creativity", agent.creativity)
         agent.stability = data.get("stability", agent.stability)
         agent.satisfaction = data.get("satisfaction", agent.satisfaction)
+        agent.collaboration = data.get("collaboration", 50)  # Phase 3.2 新增
+        agent.skill_points = data.get("skill_points", 0)  # Phase 3.2 新增
+        agent.bond_days = data.get("bond_days", 0)  # Phase 3.2 新增
+        agent.training_days = data.get("training_days", 0)  # Phase 3.2 新增
         agent.salary = data.get("salary", agent.salary)
         agent.status = data.get("status", agent.status)
         agent.current_project = data.get("current_project")
@@ -110,27 +126,59 @@ class Agent:
         self.status = "idle"
         self.current_project = None
     
-    def train(self) -> bool:
+    def train(self, training_type: str = "online", office_level: int = 1) -> dict:
         """
-        培训，提升属性
-        返回是否成功升级
+        培训，提升属性 (Phase 3.2 增强)
+        返回培训结果
         """
         import random
         
-        # 随机提升属性
-        self.efficiency = min(100, self.efficiency + random.randint(1, 3))
-        self.creativity = min(100, self.creativity + random.randint(1, 3))
-        self.stability = min(100, self.stability + random.randint(1, 3))
+        # 培训类型配置
+        TRAINING_TYPES = {
+            "online": {"days": 1, "cost": 500, "points": 2},
+            "workshop": {"days": 3, "cost": 1500, "points": 5},
+            "external": {"days": 5, "cost": 3000, "points": 10},
+            "conference": {"days": 7, "cost": 5000, "points": 15},
+            "mentor": {"days": 10, "cost": 8000, "points": 20},
+        }
+        
+        config = TRAINING_TYPES.get(training_type, TRAINING_TYPES["online"])
+        
+        # 办公室等级加成
+        office_bonus = 1.0 + (office_level - 1) * 0.05
+        
+        # 创意加成
+        creativity_bonus = 1.0 + self.creativity / 100
+        
+        # 计算实际技能点
+        actual_points = int(config["points"] * office_bonus * creativity_bonus)
+        
+        # 更新属性
+        self.skill_points += actual_points
+        self.training_days += config["days"]
+        self.efficiency = min(100, self.efficiency + random.randint(1, actual_points))
+        self.creativity = min(100, self.creativity + random.randint(1, actual_points))
+        self.stability = min(100, self.stability + random.randint(1, actual_points))
+        self.collaboration = min(100, self.collaboration + random.randint(1, actual_points // 2))
         
         # 检查是否升级
-        total_exp = self.efficiency + self.creativity + self.stability
         old_level = self.level
-        self.level = min(5, 1 + total_exp // 100)
+        self.level = min(5, 1 + self.skill_points // 100)
         
         # 升级加薪
         if self.level > old_level:
             self.salary = int(self.salary * 1.3)
-            return True
+        
+        return {
+            "success": True,
+            "training_type": training_type,
+            "days": config["days"],
+            "cost": config["cost"],
+            "skill_points_gained": actual_points,
+            "total_skill_points": self.skill_points,
+            "leveled_up": self.level > old_level,
+            "new_level": self.level,
+        }
         
         return False
     
