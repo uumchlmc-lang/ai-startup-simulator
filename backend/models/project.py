@@ -159,15 +159,26 @@ class Project:
         # 基础报酬
         final_reward = self.reward
         
-        # 质量奖金/罚款
+        # 质量奖金/罚款 (调整后的公式)
         if self.quality >= 90:
-            final_reward *= 1.2  # +20% 奖金
+            final_reward *= 1.25  # +25% 奖金
         elif self.quality >= 70:
             final_reward *= 1.0  # 正常
         elif self.quality >= 50:
-            final_reward *= 0.8  # -20% 罚款
+            final_reward *= 0.75  # -25% 罚款
         else:
-            final_reward *= 0.5  # -50% 严重罚款
+            final_reward *= 0.4  # -60% 严重罚款
+        
+        # 提前完成奖励
+        days_early = self.deadline_days - self.days_remaining
+        if days_early > 0:
+            early_bonus = min(0.2, days_early * 0.05)  # 每天 5%，最高 20%
+            final_reward *= (1 + early_bonus)
+        
+        # 超时罚款
+        if self.days_remaining < 0:
+            late_penalty = min(0.5, abs(self.days_remaining) * 0.1)  # 每天 10%，最高 50%
+            final_reward *= (1 - late_penalty)
         
         return final_reward
     

@@ -1,0 +1,331 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-04-22T21:17:00-07:00",
+  "producer": "小 K (Producer Agent)",
+  "events": [
+    {
+      "id": "evt_001",
+      "name": "市场繁荣",
+      "nameEn": "Market Boom",
+      "type": "economic",
+      "rarity": "common",
+      "duration": 3,
+      "effects": {
+        "tradeIncome": 1.3,
+        "customerArrival": 1.2
+      },
+      "description": "市场需求激增，交易收入提升 30%，客户到访增加 20%",
+      "triggerCondition": "random",
+      "weight": 15
+    },
+    {
+      "id": "evt_002",
+      "name": "汇率波动",
+      "nameEn": "Currency Fluctuation",
+      "type": "economic",
+      "rarity": "uncommon",
+      "duration": 2,
+      "effects": {
+        "exchangeRate": 0.85,
+        "importCost": 1.15
+      },
+      "description": "汇率不利波动，进口成本上升 15%",
+      "triggerCondition": "random",
+      "weight": 12
+    },
+    {
+      "id": "evt_003",
+      "name": "大客户订单",
+      "nameEn": "Big Client Order",
+      "type": "business",
+      "rarity": "rare",
+      "duration": 1,
+      "effects": {
+        "oneTimeIncome": 50000,
+        "reputation": 15
+      },
+      "description": "获得大额订单，一次性收入 50000 元，声誉 +15",
+      "triggerCondition": "reputation >= 50",
+      "weight": 8
+    },
+    {
+      "id": "evt_004",
+      "name": "供应链中断",
+      "nameEn": "Supply Chain Disruption",
+      "type": "negative",
+      "rarity": "uncommon",
+      "duration": 4,
+      "effects": {
+        "productionSpeed": 0.6,
+        "deliveryDelay": 2
+      },
+      "description": "供应链问题导致生产速度下降 40%，交付延迟 2 天",
+      "triggerCondition": "random",
+      "weight": 10
+    },
+    {
+      "id": "evt_005",
+      "name": "政策利好",
+      "nameEn": "Policy Boost",
+      "type": "government",
+      "rarity": "rare",
+      "duration": 5,
+      "effects": {
+        "taxReduction": 0.8,
+        "exportSubsidy": 1.2
+      },
+      "description": "新政策出台，税收减少 20%，出口补贴增加 20%",
+      "triggerCondition": "random",
+      "weight": 6
+    },
+    {
+      "id": "evt_006",
+      "name": "竞争对手崛起",
+      "nameEn": "Competitor Rise",
+      "type": "market",
+      "rarity": "common",
+      "duration": 3,
+      "effects": {
+        "marketShare": -0.1,
+        "customerLoss": 0.15
+      },
+      "description": "新竞争对手进入市场，市场份额下降 10%",
+      "triggerCondition": "marketShare > 0.3",
+      "weight": 14
+    },
+    {
+      "id": "evt_007",
+      "name": "技术创新",
+      "nameEn": "Tech Innovation",
+      "type": "technology",
+      "rarity": "epic",
+      "duration": -1,
+      "effects": {
+        "productionEfficiency": 1.5,
+        "costReduction": 0.75
+      },
+      "description": "技术突破，生产效率提升 50%，成本降低 25%",
+      "triggerCondition": "techLevel >= 3",
+      "weight": 4
+    },
+    {
+      "id": "evt_008",
+      "name": "物流延误",
+      "nameEn": "Logistics Delay",
+      "type": "negative",
+      "rarity": "common",
+      "duration": 2,
+      "effects": {
+        "deliveryTime": 1.5,
+        "customerSatisfaction": -10
+      },
+      "description": "物流问题导致交付时间延长 50%，客户满意度 -10",
+      "triggerCondition": "random",
+      "weight": 16
+    },
+    {
+      "id": "evt_009",
+      "name": "品牌合作",
+      "nameEn": "Brand Partnership",
+      "type": "business",
+      "rarity": "rare",
+      "duration": 4,
+      "effects": {
+        "brandValue": 1.4,
+        "customerTrust": 1.3
+      },
+      "description": "与知名品牌合作，品牌价值提升 40%，客户信任度 +30%",
+      "triggerCondition": "brandValue >= 100",
+      "weight": 7
+    },
+    {
+      "id": "evt_010",
+      "name": "原材料涨价",
+      "nameEn": "Raw Material Price Increase",
+      "type": "economic",
+      "rarity": "common",
+      "duration": 3,
+      "effects": {
+        "materialCost": 1.25,
+        "profitMargin": -0.15
+      },
+      "description": "原材料价格上涨 25%，利润率下降 15%",
+      "triggerCondition": "random",
+      "weight": 15
+    },
+    {
+      "id": "evt_011",
+      "name": "展会机遇",
+      "nameEn": "Trade Show Opportunity",
+      "type": "business",
+      "rarity": "uncommon",
+      "duration": 1,
+      "effects": {
+        "leads": 50,
+        "reputation": 10
+      },
+      "description": "参加行业展会，获得 50 个潜在客户线索，声誉 +10",
+      "triggerCondition": "random",
+      "weight": 11
+    },
+    {
+      "id": "evt_012",
+      "name": "质量危机",
+      "nameEn": "Quality Crisis",
+      "type": "negative",
+      "rarity": "rare",
+      "duration": 5,
+      "effects": {
+        "reputation": -30,
+        "refundRate": 0.3,
+        "customerLoss": 0.25
+      },
+      "description": "产品质量问题，声誉 -30，退款率上升至 30%",
+      "triggerCondition": "qualityControl < 50",
+      "weight": 5
+    },
+    {
+      "id": "evt_013",
+      "name": "人才加入",
+      "nameEn": "Talent Acquisition",
+      "type": "human_resource",
+      "rarity": "uncommon",
+      "duration": -1,
+      "effects": {
+        "teamEfficiency": 1.2,
+        "innovationRate": 1.15
+      },
+      "description": "优秀员工加入，团队效率提升 20%，创新率 +15%",
+      "triggerCondition": "random",
+      "weight": 10
+    },
+    {
+      "id": "evt_014",
+      "name": "关税调整",
+      "nameEn": "Tariff Adjustment",
+      "type": "government",
+      "rarity": "uncommon",
+      "duration": 4,
+      "effects": {
+        "exportTax": 1.2,
+        "competitiveness": -0.15
+      },
+      "description": "出口关税上调 20%，国际竞争力下降 15%",
+      "triggerCondition": "random",
+      "weight": 12
+    },
+    {
+      "id": "evt_015",
+      "name": "社交媒体爆红",
+      "nameEn": "Social Media Viral",
+      "type": "marketing",
+      "rarity": "epic",
+      "duration": 2,
+      "effects": {
+        "brandExposure": 5.0,
+        "customerArrival": 2.0,
+        "reputation": 25
+      },
+      "description": "品牌在社交媒体爆红，曝光量 5 倍，客户到访翻倍",
+      "triggerCondition": "marketingBudget >= 10000",
+      "weight": 3
+    },
+    {
+      "id": "evt_016",
+      "name": "库存积压",
+      "nameEn": "Inventory Overstock",
+      "type": "negative",
+      "rarity": "common",
+      "duration": 3,
+      "effects": {
+        "storageCost": 1.4,
+        "cashFlow": -0.2
+      },
+      "description": "库存积压，仓储成本增加 40%，现金流压力 +20%",
+      "triggerCondition": "inventory > maxCapacity * 0.8",
+      "weight": 14
+    },
+    {
+      "id": "evt_017",
+      "name": "海外仓建立",
+      "nameEn": "Overseas Warehouse Setup",
+      "type": "infrastructure",
+      "rarity": "rare",
+      "duration": -1,
+      "effects": {
+        "deliverySpeed": 1.6,
+        "shippingCost": 0.7,
+        "customerSatisfaction": 15
+      },
+      "description": "建立海外仓，配送速度提升 60%，运费降低 30%",
+      "triggerCondition": "capital >= 100000",
+      "weight": 6
+    },
+    {
+      "id": "evt_018",
+      "name": "黑客攻击",
+      "nameEn": "Cyber Attack",
+      "type": "negative",
+      "rarity": "epic",
+      "duration": 2,
+      "effects": {
+        "dataLoss": 0.3,
+        "reputation": -20,
+        "recoveryCost": 30000
+      },
+      "description": "遭受黑客攻击，数据损失 30%，声誉 -20，恢复成本 30000 元",
+      "triggerCondition": "securityLevel < 60",
+      "weight": 2
+    },
+    {
+      "id": "evt_019",
+      "name": "战略合作伙伴",
+      "nameEn": "Strategic Partnership",
+      "type": "business",
+      "rarity": "legendary",
+      "duration": -1,
+      "effects": {
+        "marketAccess": 1.5,
+        "resourceSharing": 1.4,
+        "reputation": 40
+      },
+      "description": "达成战略合作，市场准入提升 50%，资源共享 +40%",
+      "triggerCondition": "reputation >= 80 && capital >= 200000",
+      "weight": 1
+    },
+    {
+      "id": "evt_020",
+      "name": "经济衰退",
+      "nameEn": "Economic Recession",
+      "type": "economic",
+      "rarity": "epic",
+      "duration": 6,
+      "effects": {
+        "demand": 0.5,
+        "price": 0.8,
+        "customerArrival": 0.6
+      },
+      "description": "宏观经济衰退，需求下降 50%，价格压力 -20%",
+      "triggerCondition": "random",
+      "weight": 3
+    }
+  ],
+  "eventTypes": [
+    "economic",
+    "business",
+    "negative",
+    "government",
+    "market",
+    "technology",
+    "human_resource",
+    "marketing",
+    "infrastructure"
+  ],
+  "rarityLevels": {
+    "common": { "weight": 15, "probability": 0.45 },
+    "uncommon": { "weight": 10, "probability": 0.30 },
+    "rare": { "weight": 6, "probability": 0.15 },
+    "epic": { "weight": 3, "probability": 0.08 },
+    "legendary": { "weight": 1, "probability": 0.02 }
+  }
+}

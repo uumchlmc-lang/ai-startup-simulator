@@ -22,7 +22,7 @@ class Company:
     name: str = "AI 创业公司"
     
     # 财务
-    cash: float = 50000.0       # 现金 (初始$50k)
+    cash: float = 75000.0       # 现金 (初始$75k)
     total_earnings: float = 0.0  # 总收入
     total_expenses: float = 0.0  # 总支出
     

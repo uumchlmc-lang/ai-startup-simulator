@@ -107,16 +107,34 @@ class Agent:
         # 基础效率
         base_progress = self.efficiency * (hours / 8)
         
-        # 等级加成
-        level_bonus = 1.0 + (self.level - 1) * 0.2
+        # 等级加成 (指数成长：每级 +25%)
+        level_bonus = 1.0 + (self.level - 1) * 0.25
         
         # 满意度影响
         satisfaction_factor = 0.5 + (self.satisfaction / 100) * 0.5
         
-        progress = int(base_progress * level_bonus * satisfaction_factor)
+        # 羁绊加成 (每 30 天 +5%，最高 +25%)
+        bond_bonus = 1.0 + min(0.25, self.bond_days // 30 * 0.05)
+        
+        # 技能点加成 (每 100 技能点 +10%)
+        skill_bonus = 1.0 + (self.skill_points // 100) * 0.1
+        
+        progress = int(base_progress * level_bonus * satisfaction_factor * bond_bonus * skill_bonus)
         
         # 满意度轻微下降
         self.satisfaction = max(0, self.satisfaction - 1)
+        
+        # 经验值增长 (基于工作表现)
+        exp_gain = int(progress * 0.1)
+        self.skill_points += exp_gain
+        
+        # 检查升级
+        old_level = self.level
+        self.level = min(5, 1 + self.skill_points // 100)
+        
+        # 升级加薪 (指数成长：每级 +30%)
+        if self.level > old_level:
+            self.salary = int(self.salary * 1.3)
         
         return progress
     
