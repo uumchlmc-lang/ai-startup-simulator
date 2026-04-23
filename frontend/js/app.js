@@ -107,14 +107,43 @@ async function newGame() {
 
 // 升级办公室
 async function upgradeOffice() {
+    // 获取当前办公室等级和升级成本
+    const status = await api.getGameStatus();
+    const currentLevel = status.office_level || 1;
+    const nextLevel = currentLevel + 1;
+    
+    // 计算升级成本 (每级$50k)
+    const upgradeCost = currentLevel * 50000;
+    
+    if (currentLevel >= 5) {
+        showNotification('❌ 办公室已达最高等级！', 'error');
+        return;
+    }
+    
+    // 确认对话框
+    if (!confirm(`🏢 升级办公室
+
+当前等级：Lv${currentLevel}
+目标等级：Lv${nextLevel}
+升级成本：$${upgradeCost.toLocaleString()}
+
+升级效果:
+• 员工容量 +5
+• 培训效果 +${currentLevel * 5}%
+• 每日租金 +$${(currentLevel * 1000).toLocaleString()}
+
+确定升级吗？`)) {
+        return;
+    }
+    
     try {
         const result = await api.upgradeOffice();
         if (result.success) {
-            showNotification(`✅ 升级到 Lv${result.office_level}！`, 'success');
-            const status = await api.getGameStatus();
-            updateUI(status);
+            showNotification(`✅ 升级到 Lv${result.office_level}！花费 $${upgradeCost.toLocaleString()}`, 'success');
+            const newStatus = await api.getGameStatus();
+            updateUI(newStatus);
         } else {
-            showNotification('❌ 资金不足', 'error');
+            showNotification(`❌ ${result.error || '资金不足'}`, 'error');
         }
     } catch (e) {
         showNotification(`❌ 错误：${e.message}`, 'error');
@@ -138,6 +167,69 @@ async function hireAgent() {
         showNotification(`❌ 错误：${e.message}`, 'error');
     }
 }
+
+// 解雇员工
+window.fireAgent = async function(agentId, agentName) {
+    if (!confirm(`确定要解雇 ${agentName} 吗？\n\n解雇后无法恢复！`)) {
+        return;
+    }
+    try {
+        const result = await api.fireAgent(agentId);
+        if (result.success) {
+            showNotification(`✅ 已解雇 ${agentName}`, 'success');
+            updateAgentsList();
+            const status = await api.getGameStatus();
+            updateUI(status);
+        } else {
+            showNotification(`❌ ${result.error}`, 'error');
+        }
+    } catch (e) {
+        showNotification(`❌ ${e.message}`, 'error');
+    }
+};
+
+// 培训员工
+window.trainAgent = async function(agentId, agentName) {
+    const TRAINING_TYPES = {
+        'online': { name: '在线课程', days: 1, cost: 500, points: 2 },
+        'workshop': { name: '工作坊', days: 3, cost: 1500, points: 5 },
+        'external': { name: '外部培训', days: 5, cost: 3000, points: 10 },
+        'conference': { name: '行业会议', days: 7, cost: 5000, points: 15 },
+        'mentor': { name: '导师指导', days: 10, cost: 8000, points: 20 },
+    };
+    
+    // 创建选择对话框
+    const options = Object.entries(TRAINING_TYPES).map(([key, value]) => 
+        `${key}|${value.name} - ${value.days}天 - $${value.cost.toLocaleString()} (+${value.points}技能点)`
+    ).join('\n');
+    
+    const choice = prompt(`📚 选择培训类型 - ${agentName}\n\n${options}\n\n输入选项 (online/workshop/external/conference/mentor):`);
+    
+    if (!choice || !TRAINING_TYPES[choice]) {
+        return;
+    }
+    
+    const selected = TRAINING_TYPES[choice];
+    
+    if (!confirm(`确认培训:\n\n类型：${selected.name}\n时长：${selected.days}天\n成本：$${selected.cost.toLocaleString()}\n技能点：+${selected.points}\n\n确定吗？`)) {
+        return;
+    }
+    
+    try {
+        const result = await api.trainAgent(agentId, choice);
+        if (result.success) {
+            const r = result.result;
+            showNotification(`✅ 培训完成！\n${selected.name}: +${r.skill_points_gained}技能点\n总技能点：${r.total_skill_points}\n${r.leveled_up ? '🎉 升级了！' : ''}`, 'success');
+            updateAgentsList();
+            const status = await api.getGameStatus();
+            updateUI(status);
+        } else {
+            showNotification(`❌ ${result.error || '培训失败'}`, 'error');
+        }
+    } catch (e) {
+        showNotification(`❌ ${e.message}`, 'error');
+    }
+};
 
 // 切换标签
 function showTab(tabName) {
@@ -180,15 +272,20 @@ async function updateAgentsList() {
             return;
         }
         
-        container.innerHTML = result.agents.map(agent => `
+        container.innerHTML = result.agents.map((agent, index) => `
             <div class="card">
-                <div class="card-header">👨‍💻 ${agent.name}</div>
+                <div class="card-header">
+                    <span>👨‍💻 ${agent.name} (Lv${agent.level})</span>
+                    <div style="float:right;">
+                        <button class="btn btn-primary btn-sm" onclick="trainAgent('${agent.id}', '${agent.name}')" style="float:right;padding:2px 8px;font-size:12px;margin-right:5px;">📚 培训</button>
+                        <button class="btn btn-danger btn-sm" onclick="fireAgent('${agent.id}', '${agent.name}')" style="float:right;padding:2px 8px;font-size:12px;">解雇</button>
+                    </div>
+                </div>
                 <div class="card-body">
                     <div class="card-row"><span class="card-label">职位:</span><span class="card-value">${agent.role}</span></div>
-                    <div class="card-row"><span class="card-label">等级:</span><span class="card-value">Lv${agent.level}</span></div>
                     <div class="card-row"><span class="card-label">效率:</span><span class="card-value">${agent.efficiency}</span></div>
                     <div class="card-row"><span class="card-label">协作:</span><span class="card-value">${agent.collaboration || 50}</span></div>
-                    <div class="card-row"><span class="card-label">技能点:</span><span class="card-value">${agent.skill_points || 0}</span></div>
+                    <div class="card-row"><span class="card-label">技能点:</span><span class="card-value">${agent.skill_points || 0} (升级需 100)</span></div>
                     <div class="card-row"><span class="card-label">羁绊:</span><span class="card-value">${agent.bond_days || 0}天</span></div>
                     <div class="card-row"><span class="card-label">薪资:</span><span class="card-value">$${agent.salary.toLocaleString()}/天</span></div>
                 </div>
