@@ -22,8 +22,8 @@ class GameEvent:
     
     id: str
     name: str
-    name_en: str = ""  # 英文名称
     description: str
+    name_en: str = ""  # 英文名称
     event_type: str = "economic"  # economic, business, negative, government, market, technology, human_resource, marketing, infrastructure
     rarity: str = "common"  # common, uncommon, rare, epic, legendary
     effects: Dict[str, Any] = field(default_factory=dict)  # 效果字典
