@@ -73,6 +73,9 @@
             <button class="btn btn-info" onclick="showTab('projects')">📋 查看项目</button>
             <button class="btn btn-warning" onclick="upgradeOffice()">🏢 升级办公室</button>
             <button class="btn btn-info" onclick="showTab('bond')">🤝 团队羁绊</button>
+            <button class="btn btn-info" onclick="showTab('equipment')">🔧 设备中心</button>
+            <button class="btn btn-info" onclick="showTab('brand')">📢 品牌管理</button>
+            <button class="btn btn-info" onclick="showTab('funding')">💰 融资中心</button>
         </div>
 
         <!-- 消息通知 -->
@@ -120,6 +123,47 @@
             <div id="tab-projects" class="tab-content">
                 <h2>📋 项目管理</h2>
                 <div id="projects-list" class="cards-grid"></div>
+            </div>
+
+            <!-- 设备中心 -->
+            <div id="tab-equipment" class="tab-content">
+                <h2>🔧 设备中心</h2>
+                <div id="equipment-list" class="cards-grid"></div>
+            </div>
+
+            <!-- 品牌管理 -->
+            <div id="tab-brand" class="tab-content">
+                <h2>📢 品牌管理</h2>
+                <div id="brand-panel" class="card">
+                    <div class="card-body">
+                        <div class="card-row"><span class="card-label">品牌等级:</span><span class="card-value" id="brand-level">无名小卒</span></div>
+                        <div class="card-row"><span class="card-label">倍率加成:</span><span class="card-value" id="brand-mult">1.0x</span></div>
+                        <div class="card-row"><span class="card-label">日维护费:</span><span class="card-value" id="brand-cost">$0</span></div>
+                    </div>
+                </div>
+                <h3>营销活动</h3>
+                <div id="marketing-list" class="cards-grid"></div>
+            </div>
+
+            <!-- 融资中心 -->
+            <div id="tab-funding" class="tab-content">
+                <h2>💰 融资中心</h2>
+                <div id="funding-panel" class="card">
+                    <div class="card-body">
+                        <div class="card-row"><span class="card-label">已出让股权:</span><span class="card-value" id="equity-sold">0%</span></div>
+                        <div class="card-row"><span class="card-label">分红比例:</span><span class="card-value" id="dividend-rate">0%</span></div>
+                        <div class="card-row"><span class="card-label">创始人出局:</span><span class="card-value" id="founder-out">否</span></div>
+                    </div>
+                </div>
+                <h3>融资轮次</h3>
+                <div id="funding-rounds" class="cards-grid"></div>
+                <h3>股权回购</h3>
+                <div class="card">
+                    <div class="card-body">
+                        <input type="number" id="buyback-amount" placeholder="回购金额" style="width:200px;padding:5px;margin-right:10px;">
+                        <button class="btn btn-warning" onclick="buybackEquity()">回购股权</button>
+                    </div>
+                </div>
             </div>
         </div>
 

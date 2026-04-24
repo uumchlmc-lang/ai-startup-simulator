@@ -240,6 +240,9 @@ function showTab(tabName) {
         if (tabName === 'agents') updateAgentsList();
         else if (tabName === 'projects') updateProjectsList();
         else if (tabName === 'bond') updateBondPanel();
+        else if (tabName === 'equipment') updateEquipmentPanel();
+        else if (tabName === 'brand') updateBrandPanel();
+        else if (tabName === 'funding') updateFundingPanel();
     }
 }
 
@@ -403,6 +406,198 @@ function showNotification(message, type = 'info') {
     setTimeout(() => div.remove(), 5000);
 }
 
+// ========== Phase 3.3: 设备中心 ==========
+
+async function updateEquipmentPanel() {
+    try {
+        const data = await api.getEquipments();
+        const container = document.getElementById('equipment-list');
+        const owned = data.equipments || [];
+        const config = data.config || {};
+        
+        const equipmentIcons = {
+            '高速网络': '🌐',
+            '开发者工作站': '💻',
+            '云服务器集群': '☁️',
+            '测试实验室': '🔬',
+            'AI 训练集群': '🤖',
+        };
+        
+        container.innerHTML = Object.entries(config).map(([name, cfg]) => {
+            const isOwned = owned.includes(name);
+            const icon = equipmentIcons[name] || '🔧';
+            const officeReq = cfg.office_required || 1;
+            const bonus = cfg.bonus || 0;
+            
+            return `
+                <div class="card" style="${isOwned ? 'opacity:0.6;' : ''}">
+                    <div class="card-header">${icon} ${name} ${isOwned ? '✅' : ''}</div>
+                    <div class="card-body">
+                        <div class="card-row"><span class="card-label">价格:</span><span class="card-value">$${cfg.cost.toLocaleString()}</span></div>
+                        <div class="card-row"><span class="card-label">加成:</span><span class="card-value">+${(bonus * 100).toFixed(0)}%</span></div>
+                        <div class="card-row"><span class="card-label">解锁条件:</span><span class="card-value">办公室 ≥ Lv.${officeReq}</span></div>
+                        ${!isOwned ? `<button class="btn btn-success" onclick="buyEquipment('${name}')">购买</button>` : '<p style="color:#28a745;">已购买</p>'}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } catch (e) {
+        console.error('更新设备面板失败:', e);
+    }
+}
+
+async function buyEquipment(name) {
+    try {
+        const result = await api.buyEquipment(name);
+        if (result.success) {
+            showNotification(`✅ 购买了 ${name}`, 'success');
+            updateEquipmentPanel();
+            const status = await api.getGameStatus();
+            updateUI(status);
+        } else {
+            showNotification(`❌ ${result.error}`, 'error');
+        }
+    } catch (e) {
+        showNotification(`❌ ${e.message}`, 'error');
+    }
+}
+
+// ========== Phase 3.3: 品牌管理 ==========
+
+async function updateBrandPanel() {
+    try {
+        const brand = await api.getBrandStatus();
+        document.getElementById('brand-level').textContent = brand.brand_name || '无名小卒';
+        document.getElementById('brand-mult').textContent = `${(brand.multiplier || 1.0).toFixed(1)}x`;
+        document.getElementById('brand-cost').textContent = `$${(brand.daily_cost || 0).toLocaleString()}`;
+        
+        const container = document.getElementById('marketing-list');
+        const config = brand.marketing_config || {};
+        
+        const campaignIcons = {
+            '社交媒体推广': '📱',
+            '行业展会参展': '🎪',
+            '电视广告': '📺',
+            '全球发布会': '🌍',
+        };
+        
+        container.innerHTML = Object.entries(config).map(([name, cfg]) => {
+            const icon = campaignIcons[name] || '📢';
+            return `
+                <div class="card">
+                    <div class="card-header">${icon} ${name}</div>
+                    <div class="card-body">
+                        <div class="card-row"><span class="card-label">成本:</span><span class="card-value">$${cfg.cost.toLocaleString()}</span></div>
+                        <div class="card-row"><span class="card-label">品牌提升:</span><span class="card-value">+${cfg.level_up} 级</span></div>
+                        <button class="btn btn-success" onclick="runMarketing('${name}')">执行</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } catch (e) {
+        console.error('更新品牌面板失败:', e);
+    }
+}
+
+async function runMarketing(name) {
+    try {
+        const result = await api.runMarketing(name);
+        if (result.success) {
+            showNotification(`✅ 品牌升级到 Lv.${result.brand_level}`, 'success');
+            updateBrandPanel();
+            const status = await api.getGameStatus();
+            updateUI(status);
+        } else {
+            showNotification(`❌ ${result.error}`, 'error');
+        }
+    } catch (e) {
+        showNotification(`❌ ${e.message}`, 'error');
+    }
+}
+
+// ========== Phase 3.3: 融资中心 ==========
+
+async function updateFundingPanel() {
+    try {
+        const funding = await api.getFundingStatus();
+        document.getElementById('equity-sold').textContent = `${(funding.equity_sold * 100).toFixed(0)}%`;
+        document.getElementById('dividend-rate').textContent = `${(funding.dividend_rate * 100).toFixed(0)}%`;
+        document.getElementById('founder-out').textContent = funding.founder_out ? '⚠️ 是' : '否';
+        document.getElementById('founder-out').style.color = funding.founder_out ? '#dc3545' : '#28a745';
+        
+        const container = document.getElementById('funding-rounds');
+        const config = funding.funding_config || {};
+        const status = await api.getGameStatus();
+        
+        const roundIcons = {
+            '种子轮': '🌱',
+            '天使轮': '👼',
+            'A 轮': '🅰️',
+            'B 轮': '🅱️',
+            'IPO': '📈',
+        };
+        
+        container.innerHTML = Object.entries(config).map(([name, cfg]) => {
+            const icon = roundIcons[name] || '💰';
+            const canApply = status.day >= cfg.min_day && status.reputation >= cfg.min_reputation;
+            const alreadyFunded = funding.investors && funding.investors.some(i => i.round === name);
+            
+            return `
+                <div class="card" style="${alreadyFunded ? 'opacity:0.6;' : ''}">
+                    <div class="card-header">${icon} ${name} ${alreadyFunded ? '✅' : ''}</div>
+                    <div class="card-body">
+                        <div class="card-row"><span class="card-label">融资金额:</span><span class="card-value">$${cfg.amount.toLocaleString()}</span></div>
+                        <div class="card-row"><span class="card-label">出让股权:</span><span class="card-value">${(cfg.equity * 100).toFixed(0)}%</span></div>
+                        <div class="card-row"><span class="card-label">季度分红:</span><span class="card-value">${(cfg.dividend_rate * 100).toFixed(0)}%</span></div>
+                        <div class="card-row"><span class="card-label">解锁条件:</span><span class="card-value">第 ${cfg.min_day} 天, reputation ≥ ${cfg.min_reputation}</span></div>
+                        ${!alreadyFunded ? (canApply ? `<button class="btn btn-success" onclick="applyFunding('${name}')">申请融资</button>` : '<button class="btn btn-secondary" disabled>未解锁</button>') : '<p style="color:#28a745;">已融资</p>'}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } catch (e) {
+        console.error('更新融资面板失败:', e);
+    }
+}
+
+async function applyFunding(name) {
+    try {
+        const result = await api.applyFunding(name);
+        if (result.success) {
+            showNotification(`✅ ${name}融资成功! 现金 +$${result.cash.toLocaleString()}`, 'success');
+            updateFundingPanel();
+            const status = await api.getGameStatus();
+            updateUI(status);
+        } else {
+            showNotification(`❌ ${result.error}`, 'error');
+        }
+    } catch (e) {
+        showNotification(`❌ ${e.message}`, 'error');
+    }
+}
+
+async function buybackEquity() {
+    const amount = parseFloat(document.getElementById('buyback-amount').value);
+    if (!amount || amount <= 0) {
+        showNotification('❌ 请输入有效金额', 'error');
+        return;
+    }
+    
+    try {
+        const result = await api.buybackEquity(amount);
+        if (result.success) {
+            showNotification(`✅ 回购成功! 回购 ${((result.equity_bought || 0) * 100).toFixed(1)}% 股权`, 'success');
+            updateFundingPanel();
+            const status = await api.getGameStatus();
+            updateUI(status);
+        } else {
+            showNotification(`❌ ${result.error}`, 'error');
+        }
+    } catch (e) {
+        showNotification(`❌ ${e.message}`, 'error');
+    }
+}
+
 // 导出全局函数
 window.nextDay = nextDay;
 window.newGame = newGame;
@@ -412,3 +607,8 @@ window.showTab = showTab;
 window.acceptProject = acceptProject;
 window.completeProject = completeProject;
 window.updateBondPanel = updateBondPanel;
+window.buyEquipment = buyEquipment;
+window.runMarketing = runMarketing;
+window.maintainBrand = maintainBrand;
+window.applyFunding = applyFunding;
+window.buybackEquity = buybackEquity;

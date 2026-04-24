@@ -141,6 +141,69 @@ export async function getBondStatus() {
     return await resp.json();
 }
 
+// Phase 3.3: 设备系统
+export async function buyEquipment(equipmentName) {
+    const resp = await fetch(`${API_BASE}/company/buy-equipment`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({equipment_name: equipmentName})
+    });
+    return await resp.json();
+}
+
+export async function getEquipments() {
+    const resp = await fetch(`${API_BASE}/company/equipments`);
+    return await resp.json();
+}
+
+// Phase 3.3: 品牌系统
+export async function runMarketing(campaignName) {
+    const resp = await fetch(`${API_BASE}/company/run-marketing`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({campaign_name: campaignName})
+    });
+    return await resp.json();
+}
+
+export async function maintainBrand(days = 30) {
+    const resp = await fetch(`${API_BASE}/company/maintain-brand`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({days})
+    });
+    return await resp.json();
+}
+
+export async function getBrandStatus() {
+    const resp = await fetch(`${API_BASE}/company/brand-status`);
+    return await resp.json();
+}
+
+// Phase 3.3: 融资系统
+export async function applyFunding(roundName) {
+    const resp = await fetch(`${API_BASE}/company/apply-funding`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({round_name: roundName})
+    });
+    return await resp.json();
+}
+
+export async function buybackEquity(amount) {
+    const resp = await fetch(`${API_BASE}/company/buyback-equity`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({amount})
+    });
+    return await resp.json();
+}
+
+export async function getFundingStatus() {
+    const resp = await fetch(`${API_BASE}/company/funding-status`);
+    return await resp.json();
+}
+
 // 导出到 window (避免命名冲突)
 window.nextDayAPI = nextDay;
 window.newGameAPI = newGame;
