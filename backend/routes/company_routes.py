@@ -57,3 +57,13 @@ def research_technology():
     result = game.research_technology(tech_name)
     
     return jsonify(result)
+
+
+@bp.route("/bond-status", methods=["GET"])
+def get_bond_status():
+    """获取羁绊状态"""
+    game = get_current_game()
+    if not game.company:
+        return jsonify({"error": "No active game"}), 404
+    bond = game.company.get_bond_tier()
+    return jsonify(bond)

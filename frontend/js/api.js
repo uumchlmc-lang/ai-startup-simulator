@@ -136,6 +136,11 @@ export async function researchTechnology(techName) {
     return await resp.json();
 }
 
+export async function getBondStatus() {
+    const resp = await fetch(`${API_BASE}/company/bond-status`);
+    return await resp.json();
+}
+
 // 导出到 window (避免命名冲突)
 window.nextDayAPI = nextDay;
 window.newGameAPI = newGame;

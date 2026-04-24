@@ -239,6 +239,7 @@ function showTab(tabName) {
         tab.classList.add('active');
         if (tabName === 'agents') updateAgentsList();
         else if (tabName === 'projects') updateProjectsList();
+        else if (tabName === 'bond') updateBondPanel();
     }
 }
 
@@ -259,6 +260,35 @@ function updateUI(status) {
     
     updateAgentsList();
     updateProjectsList();
+}
+
+// 更新羁绊面板
+async function updateBondPanel() {
+    try {
+        const bond = await api.getBondStatus();
+        if (!bond || bond.error) return;
+        
+        document.getElementById('bond-tier').textContent = bond.name;
+        document.getElementById('bond-days').textContent = `${bond.bond_days} 天`;
+        document.getElementById('bond-bonus').textContent = `+${(bond.quality_bonus * 100).toFixed(0)}%`;
+        
+        if (bond.next_tier !== null) {
+            const tierNames = {0: "陌生", 1: "相识", 2: "默契", 3: "信赖", 4: "灵魂伴侣"};
+            document.getElementById('bond-next').textContent = `${tierNames[bond.next_tier]} (${bond.days_to_next}天)`;
+            
+            // 计算进度百分比
+            const currentMin = bond.bond_days - bond.days_to_next + (bond.next_tier === 1 ? 8 : bond.next_tier === 2 ? 23 : bond.next_tier === 3 ? 30 : 39);
+            const progress = Math.min(100, (bond.bond_days / (bond.next_tier === 1 ? 8 : bond.next_tier === 2 ? 31 : bond.next_tier === 3 ? 61 : 100)) * 100);
+            document.getElementById('bond-progress').style.width = `${progress}%`;
+            document.getElementById('bond-progress-text').textContent = `${progress.toFixed(0)}%`;
+        } else {
+            document.getElementById('bond-next').textContent = "已满级";
+            document.getElementById('bond-progress').style.width = "100%";
+            document.getElementById('bond-progress-text').textContent = "100%";
+        }
+    } catch (e) {
+        console.error('更新羁绊面板失败:', e);
+    }
 }
 
 // 更新员工列表
@@ -381,3 +411,4 @@ window.hireAgent = hireAgent;
 window.showTab = showTab;
 window.acceptProject = acceptProject;
 window.completeProject = completeProject;
+window.updateBondPanel = updateBondPanel;

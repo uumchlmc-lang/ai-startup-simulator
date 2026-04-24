@@ -46,6 +46,15 @@ class Company:
     # 羁绊系统 (Phase 3.2 新增)
     bond_days: int = 0  # 羁绊累积天数
     
+    # 羁绊等级配置
+    BOND_TIERS = {
+        0: {"name": "陌生", "quality_bonus": 0.0, "min_days": 0},
+        1: {"name": "相识", "quality_bonus": 0.05, "min_days": 8},
+        2: {"name": "默契", "quality_bonus": 0.10, "min_days": 31},
+        3: {"name": "信赖", "quality_bonus": 0.15, "min_days": 61},
+        4: {"name": "灵魂伴侣", "quality_bonus": 0.20, "min_days": 100},
+    }
+    
     # 时间记录
     created_at: datetime = field(default_factory=datetime.now)
     last_updated: datetime = field(default_factory=datetime.now)
@@ -67,6 +76,7 @@ class Company:
             "projects_completed": self.projects_completed,
             "projects_failed": self.projects_failed,
             "total_days": self.total_days,
+            "bond_days": self.bond_days,
             "created_at": self.created_at.isoformat(),
             "last_updated": self.last_updated.isoformat(),
         }
@@ -91,6 +101,7 @@ class Company:
         company.total_days = data.get("total_days", 0)
         company.created_at = datetime.fromisoformat(data["created_at"]) if "created_at" in data else datetime.now()
         company.last_updated = datetime.fromisoformat(data["last_updated"]) if "last_updated" in data else datetime.now()
+        company.bond_days = data.get("bond_days", 0)
         return company
     
     def to_json(self) -> str:
@@ -167,6 +178,26 @@ class Company:
         
         return True
     
+    def get_bond_tier(self) -> dict:
+        """获取当前羁绊等级"""
+        tier = 0
+        for t in sorted(self.BOND_TIERS.keys(), reverse=True):
+            if self.bond_days >= self.BOND_TIERS[t]["min_days"]:
+                tier = t
+                break
+        return {
+            "tier": tier,
+            "name": self.BOND_TIERS[tier]["name"],
+            "quality_bonus": self.BOND_TIERS[tier]["quality_bonus"],
+            "bond_days": self.bond_days,
+            "next_tier": min(tier + 1, 4) if tier < 4 else None,
+            "days_to_next": (
+                self.BOND_TIERS[tier + 1]["min_days"] - self.bond_days
+                if tier < 4
+                else 0
+            ),
+        }
+    
     def complete_project(self, project_id: str) -> float:
         """完成项目，返回实际报酬"""
         project = next((p for p in self.projects if p.id == project_id), None)
@@ -179,6 +210,12 @@ class Company:
         
         # 完成项目
         reward = project.complete()
+        
+        # 羁绊加成：质量越高，报酬加成越多
+        bond_tier = self.get_bond_tier()
+        if bond_tier["quality_bonus"] > 0:
+            reward *= (1 + bond_tier["quality_bonus"])
+        
         self.cash += reward
         self.total_earnings += reward
         self.projects_completed += 1
@@ -337,6 +374,7 @@ class Company:
     
     def get_status(self) -> dict:
         """获取公司状态"""
+        bond = self.get_bond_tier()
         return {
             "name": self.name,
             "day": self.day,
@@ -348,6 +386,7 @@ class Company:
             "active_projects": len(self.get_active_projects()),
             "technologies": len(self.technologies),
             "daily_expenses": self.get_agent_daily_salary() + self.get_office_rent(),
+            "bond": bond,
         }
     
     def check_game_over(self) -> tuple:

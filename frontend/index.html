@@ -72,6 +72,7 @@
             <button class="btn btn-success" onclick="showTab('agents')">👥 雇佣员工</button>
             <button class="btn btn-info" onclick="showTab('projects')">📋 查看项目</button>
             <button class="btn btn-warning" onclick="upgradeOffice()">🏢 升级办公室</button>
+            <button class="btn btn-info" onclick="showTab('bond')">🤝 团队羁绊</button>
         </div>
 
         <!-- 消息通知 -->
@@ -79,6 +80,25 @@
 
         <!-- 标签页内容 -->
         <div class="tabs">
+            <!-- 羁绊面板 -->
+            <div id="tab-bond" class="tab-content">
+                <h2>🤝 团队羁绊</h2>
+                <div id="bond-panel" class="card">
+                    <div class="card-body">
+                        <div class="card-row"><span class="card-label">羁绊等级:</span><span class="card-value" id="bond-tier">陌生</span></div>
+                        <div class="card-row"><span class="card-label">累积天数:</span><span class="card-value" id="bond-days">0 天</span></div>
+                        <div class="card-row"><span class="card-label">质量加成:</span><span class="card-value" id="bond-bonus">+0%</span></div>
+                        <div class="card-row"><span class="card-label">下一级:</span><span class="card-value" id="bond-next">相识 (8天)</span></div>
+                        <div class="progress-bar"><div class="progress-fill" id="bond-progress" style="width: 0%"></div></div>
+                        <div class="card-row"><span class="card-label">进度:</span><span class="card-value" id="bond-progress-text">0%</span></div>
+                    </div>
+                </div>
+                <p style="color:#556b7c;font-size:13px;margin-top:10px;">
+                    💡 羁绊等级随时间提升，高级羁绊可为项目报酬提供额外加成。<br>
+                    羁绊等级越高，团队默契越好，完成项目时获得的质量加成越多。
+                </p>
+            </div>
+
             <!-- Agent 列表 -->
             <div id="tab-agents" class="tab-content">
                 <h2>👥 员工管理</h2>
