@@ -83,7 +83,7 @@ def get_equipment_bonus(company: Company) -> float:
 ```python
 # Company dataclass 新增
 brand_level: float = 0.0          # 品牌等级 (0-5)
-last_brand_check_day: int = 0     # 上次品牌检查天数
+brand_warning_until: int = 0      # 品牌宽限期截止天数
 ```
 
 **品牌等级表**：
@@ -115,9 +115,15 @@ last_brand_check_day: int = 0     # 上次品牌检查天数
 **加成计算**：
 ```python
 def get_brand_multiplier(company: Company) -> float:
-    base = {0: 1.0, 1: 1.1, 2: 1.2, 3: 1.3, 4: 1.5, 5: 2.0}.get(int(company.brand_level), 1.0)
-    equipment_bonus = get_equipment_bonus(company)
-    return min(base + equipment_bonus, 2.5)  # 上限 150%
+    """品牌独立倍率（含 0.5 级支持）"""
+    level = company.brand_level
+    if level >= 5: return 2.0
+    if level >= 4: return 1.5
+    if level >= 3: return 1.3
+    if level >= 2: return 1.2
+    if level >= 1: return 1.1
+    if level >= 0.5: return 1.05
+    return 1.0
 ```
 
 **API**：
@@ -125,7 +131,9 @@ def get_brand_multiplier(company: Company) -> float:
 - `GET /api/company/brand` — 获取品牌状态
 - `POST /api/company/maintain-brand` — 续费维护，请求体 `{ "days": 30 }`
 
-**维护费扣除位置**：`Company.next_day()` 中每 30 天扣除
+**维护费扣除位置**：`Company.next_day()` 中 `day % 30 == 0` 时扣除（月维护费 = 日维护费 × 30）
+
+**衰减检查位置**：`Company.next_day()` 中 `day % 7 == 0` 时检查。付不起维护费 → 标记 `brand_warning_until = day + 3` → 到宽限期仍未续费 → 再扣 0.5 级
 
 ---
 
@@ -159,7 +167,8 @@ last_dividend_day: int = 0            # 上次分红结算天数
 **回购机制**：
 ```python
 def buyback_equity(company: Company, amount: float) -> dict:
-    valuation = company.total_earnings * (1 + company.reputation * 0.2)
+    net_profit = max(company.total_earnings - company.total_expenses, 1)
+    valuation = net_profit * (1 + company.reputation * 0.2)
     if valuation <= 0:
         return {"error": "Company has no valuation yet"}
     equity_bought = amount / valuation
@@ -189,9 +198,11 @@ def buyback_equity(company: Company, amount: float) -> dict:
 ```python
 def get_total_project_multiplier(company: Company) -> float:
     """项目报酬总加成 = 品牌倍率 + 设备加成，上限 2.5x"""
-    brand = get_brand_multiplier(company)
-    equipment = get_equipment_bonus(company)
-    return min(brand + equipment - 1.0, 2.5)  # 品牌 base 已含 1.0，减去后只加超额部分
+    brand_base = {0: 1.0, 1: 1.1, 2: 1.2, 3: 1.3, 4: 1.5, 5: 2.0}.get(
+        int(company.brand_level), 1.0
+    )
+    equipment_bonus = get_equipment_bonus(company)
+    return min(brand_base + equipment_bonus, 2.5)
 ```
 
 ---
