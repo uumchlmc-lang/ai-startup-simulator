@@ -1,18 +1,18 @@
 {
   "version": "1.0",
-  "saved_at": "2026-04-23T22:51:59.957036",
+  "saved_at": "2026-04-24T07:04:20.507742",
   "company": {
-    "id": "fb487f09-b7cf-4cab-98e0-5717f0b92e26",
+    "id": "ccd3d96c-83f0-41e7-a854-056c90c4a9d1",
     "name": "我的 AI 公司",
     "cash": 73000.0,
     "total_earnings": 0.0,
     "total_expenses": 2000.0,
-    "reputation": 3.1,
+    "reputation": 3.0,
     "day": 1,
     "office_level": 1,
     "agents": [
       {
-        "id": "db38ceb0-0cdc-47f0-a155-557e29c831c4",
+        "id": "eb9fa89a-ef43-44e2-8b15-d73a6ed2d256",
         "name": "小王",
         "role": "初级程序员",
         "level": 1,
@@ -27,12 +27,12 @@
         "salary": 1000,
         "status": "idle",
         "current_project": null,
-        "hired_at": "2026-04-23T22:51:59.956330",
+        "hired_at": "2026-04-24T07:04:20.507156",
         "projects_completed": 0,
         "total_earnings": 0.0
       },
       {
-        "id": "4a7a199f-b7dd-47fe-862b-f6222b58a8ee",
+        "id": "19bec92e-945b-4f6e-a925-1bbec49f31a5",
         "name": "小李",
         "role": "初级程序员",
         "level": 1,
@@ -47,47 +47,28 @@
         "salary": 1000,
         "status": "idle",
         "current_project": null,
-        "hired_at": "2026-04-23T22:51:59.956340",
+        "hired_at": "2026-04-24T07:04:20.507166",
         "projects_completed": 0,
         "total_earnings": 0.0
       }
     ],
     "projects": [
       {
-        "id": "0a30d34b-b4fb-4925-8055-4db0f0e56a46",
-        "name": "网站开发 #856f",
+        "id": "ac948723-4244-4a06-9006-fc3a189c97c3",
+        "name": "网站开发 #c294",
         "type": "网站开发",
         "description": "",
         "difficulty": 1,
-        "deadline_days": 4,
-        "days_remaining": 4,
-        "reward": 7127,
+        "deadline_days": 3,
+        "days_remaining": 3,
+        "reward": 12634,
         "progress": 0,
         "quality": 0,
         "status": "available",
         "assigned_agents": [],
         "client_name": "未知客户",
         "client_satisfaction": 0,
-        "created_at": "2026-04-23T22:51:59.956385",
-        "started_at": null,
-        "completed_at": null
-      },
-      {
-        "id": "f6f87b39-0800-40bd-bfe6-bb96dac0caf2",
-        "name": "技术咨询 #4d5c",
-        "type": "技术咨询",
-        "description": "",
-        "difficulty": 2,
-        "deadline_days": 2,
-        "days_remaining": 2,
-        "reward": 17959,
-        "progress": 0,
-        "quality": 0,
-        "status": "available",
-        "assigned_agents": [],
-        "client_name": "未知客户",
-        "client_satisfaction": 0,
-        "created_at": "2026-04-23T22:51:59.956550",
+        "created_at": "2026-04-24T07:04:20.507197",
         "started_at": null,
         "completed_at": null
       }
@@ -97,13 +78,24 @@
     "projects_failed": 0,
     "total_days": 1,
     "bond_days": 1,
-    "created_at": "2026-04-23T22:51:59.956307",
-    "last_updated": "2026-04-23T22:51:59.956492"
+    "equipments": [],
+    "brand_level": 0.0,
+    "last_brand_check_day": 0,
+    "brand_warning_until": 0,
+    "brand_maintenance_due": false,
+    "equity_sold": 0.0,
+    "investors": [],
+    "dividend_accumulator": 0.0,
+    "last_dividend_day": 0,
+    "last_dividend_earnings": 0.0,
+    "last_dividend_expenses": 0.0,
+    "created_at": "2026-04-24T07:04:20.507110",
+    "last_updated": "2026-04-24T07:04:20.507338"
   },
   "metadata": {
     "day": 1,
     "name": "我的 AI 公司",
     "cash": 73000.0,
-    "reputation": 3.1
+    "reputation": 3.0
   }
 }

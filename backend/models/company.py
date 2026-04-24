@@ -69,6 +69,8 @@ class Company:
     investors: List[dict] = field(default_factory=list)
     dividend_accumulator: float = 0.0
     last_dividend_day: int = 0
+    last_dividend_earnings: float = 0.0  # 上次分红时的总收入
+    last_dividend_expenses: float = 0.0  # 上次分红时的总支出
     
     # 时间记录
     created_at: datetime = field(default_factory=datetime.now)
@@ -101,6 +103,8 @@ class Company:
             "investors": self.investors,
             "dividend_accumulator": self.dividend_accumulator,
             "last_dividend_day": self.last_dividend_day,
+            "last_dividend_earnings": self.last_dividend_earnings,
+            "last_dividend_expenses": self.last_dividend_expenses,
             "created_at": self.created_at.isoformat(),
             "last_updated": self.last_updated.isoformat(),
         }
@@ -135,6 +139,8 @@ class Company:
         company.investors = data.get("investors", [])
         company.dividend_accumulator = data.get("dividend_accumulator", 0.0)
         company.last_dividend_day = data.get("last_dividend_day", 0)
+        company.last_dividend_earnings = data.get("last_dividend_earnings", 0.0)
+        company.last_dividend_expenses = data.get("last_dividend_expenses", 0.0)
         return company
     
     def to_json(self) -> str:
@@ -266,9 +272,9 @@ class Company:
     BRAND_CONFIG = {
         0: {"name": "无名小卒", "daily_cost": 0, "reward_mult": 1.0, "good_project_bonus": 0.0},
         1: {"name": "地方知名", "daily_cost": 500, "reward_mult": 1.1, "good_project_bonus": 0.10},
-        2: {"name": "行业新锐", "daily_cost": 1000, "reward_mult": 1.2, "good_project_bonus": 0.10},
-        3: {"name": "知名公司", "daily_cost": 2000, "reward_mult": 1.3, "good_project_bonus": 0.20},
-        4: {"name": "行业巨头", "daily_cost": 3500, "reward_mult": 1.5, "good_project_bonus": 0.30},
+        2: {"name": "行业新锐", "daily_cost": 1000, "reward_mult": 1.2, "good_project_bonus": 0.20},
+        3: {"name": "知名公司", "daily_cost": 2000, "reward_mult": 1.3, "good_project_bonus": 0.30},
+        4: {"name": "行业巨头", "daily_cost": 3500, "reward_mult": 1.5, "good_project_bonus": 0.40},
         5: {"name": "科技帝国", "daily_cost": 5000, "reward_mult": 2.0, "good_project_bonus": 0.50},
     }
     
@@ -445,15 +451,15 @@ class Company:
         # 完成项目
         reward = project.complete()
         
-        # 羁绊加成
-        bond_tier = self.get_bond_tier()
-        if bond_tier["quality_bonus"] > 0:
-            reward *= (1 + bond_tier["quality_bonus"])
-        
-        # 品牌+设备总加成
+        # 品牌+设备总加成（加算，上限 2.5x）
         total_mult = self.get_total_project_multiplier()
         if total_mult > 1.0:
             reward *= total_mult
+        
+        # 羁绊加成（独立乘区，在品牌+设备之后）
+        bond_tier = self.get_bond_tier()
+        if bond_tier["quality_bonus"] > 0:
+            reward *= (1 + bond_tier["quality_bonus"])
         
         self.cash += reward
         self.total_earnings += reward
@@ -548,12 +554,13 @@ class Company:
                     # 第一次发现，给 3 天宽限期
                     self.brand_warning_until = self.day + 3
         
-        # Phase 3.3: 分红计算 - 每 30 天结算
+        # Phase 3.3: 分红计算 - 每 30 天结算（基于上次分红以来的净利润增量）
         dividend_rate = self.get_total_dividend_rate()
         if dividend_rate > 0 and self.day > 0 and self.day % 30 == 0:
-            # 净利润 = 收入 - 支出
-            net_profit = max(self.total_earnings - self.total_expenses, 0)
             # 计算上次分红以来的净利润增量
+            incremental_earnings = self.total_earnings - self.last_dividend_earnings
+            incremental_expenses = self.total_expenses - self.last_dividend_expenses
+            net_profit = max(incremental_earnings - incremental_expenses, 0)
             dividend = net_profit * dividend_rate
             if self.cash >= dividend:
                 self.cash -= dividend
@@ -563,6 +570,10 @@ class Company:
                 self.dividend_accumulator += dividend
                 # 无法支付分红，声誉下降
                 self.reputation = max(0, self.reputation - 0.2)
+            # 更新上次分红时的累计值
+            self.last_dividend_day = self.day
+            self.last_dividend_earnings = self.total_earnings
+            self.last_dividend_expenses = self.total_expenses
         
         # 检查 Agent 离职
         resigned = []
@@ -706,4 +717,6 @@ class Company:
             return True, "bankruptcy"
         if self.reputation <= 0:
             return True, "reputation"
+        if self.equity_sold > 0.5:
+            return True, "founder_out"
         return False, None
