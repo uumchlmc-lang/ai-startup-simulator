@@ -222,46 +222,37 @@ class AchievementEngine:
         unlocked = achievement_id in company.achievements
         progress = 0.0
         
-        # 根据成就类型计算进度
-        if "projects_completed" in str(achievement.condition):
-            if "100" in str(achievement.condition):
-                progress = min(100, (company.projects_completed / 100) * 100)
-            elif "50" in str(achievement.condition):
-                progress = min(100, (company.projects_completed / 50) * 100)
-            elif "10" in str(achievement.condition):
-                progress = min(100, (company.projects_completed / 10) * 100)
-            else:
-                progress = 100 if company.projects_completed >= 1 else 0
+        # 根据成就 ID 计算进度
+        progress_map = {
+            "first_project": (company.projects_completed, 1),
+            "ten_projects": (company.projects_completed, 10),
+            "fifty_projects": (company.projects_completed, 50),
+            "hundred_projects": (company.projects_completed, 100),
+            "hundred_days": (company.day, 100),
+            "three_sixty_five_days": (company.day, 365),
+            "seven_thirty_days": (company.day, 730),
+            "brand_lv1": (company.brand_level, 1),
+            "brand_lv2": (company.brand_level, 2),
+            "brand_lv3": (company.brand_level, 3),
+            "brand_lv4": (company.brand_level, 4),
+            "brand_lv5": (company.brand_level, 5),
+            "first_hire": (len(company.agents), 1),
+            "ten_agents": (len(company.agents), 10),
+            "hundred_agents": (len(company.agents), 100),
+            "first_equipment": (len(company.equipments), 1),
+            "all_equipment": (len(company.equipments), 5),
+            "first_earnings": (company.total_earnings, 100000),
+            "million_club": (company.total_earnings, 1000000),
+            "ten_million": (company.total_earnings, 10000000),
+        }
         
-        elif "day" in str(achievement.condition):
-            if "730" in str(achievement.condition):
-                progress = min(100, (company.day / 730) * 100)
-            elif "365" in str(achievement.condition):
-                progress = min(100, (company.day / 365) * 100)
-            elif "100" in str(achievement.condition):
-                progress = min(100, (company.day / 100) * 100)
+        if achievement_id in progress_map:
+            current, target = progress_map[achievement_id]
+            progress = min(100, (current / target) * 100) if target > 0 else 0
         
-        elif "brand_level" in str(achievement.condition):
-            progress = min(100, (company.brand_level / 5) * 100)
-        
-        elif "agents" in str(achievement.condition):
-            if "100" in str(achievement.condition):
-                progress = min(100, (len(company.agents) / 100) * 100)
-            elif "10" in str(achievement.condition):
-                progress = min(100, (len(company.agents) / 10) * 100)
-            else:
-                progress = 100 if len(company.agents) >= 1 else 0
-        
-        elif "equipments" in str(achievement.condition):
-            progress = min(100, (len(company.equipments) / 5) * 100)
-        
-        elif "total_earnings" in str(achievement.condition):
-            if "10000000" in str(achievement.condition):
-                progress = min(100, (company.total_earnings / 10000000) * 100)
-            elif "1000000" in str(achievement.condition):
-                progress = min(100, (company.total_earnings / 1000000) * 100)
-            else:
-                progress = min(100, (company.total_earnings / 100000) * 100)
+        # 已解锁成就进度为 100%
+        if unlocked:
+            progress = 100.0
         
         return {
             "id": achievement_id,
