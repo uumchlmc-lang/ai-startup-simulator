@@ -69,6 +69,16 @@ def get_bond_status():
     return jsonify(bond)
 
 
+@bp.route("/bond/<emp1_id>/<emp2_id>", methods=["GET"])
+def get_pair_bond(emp1_id: str, emp2_id: str):
+    """获取两个员工之间的羁绊"""
+    game = get_current_game()
+    if not game.company:
+        return jsonify({"error": "No active game"}), 404
+    bond = game.company.get_pair_bond(emp1_id, emp2_id)
+    return jsonify(bond)
+
+
 # ========== Phase 3.3: 设备系统 ==========
 
 @bp.route("/buy-equipment", methods=["POST"])

@@ -1,8 +1,8 @@
 {
   "version": "1.0",
-  "saved_at": "2026-04-24T07:04:20.507381",
+  "saved_at": "2026-04-25T07:41:39.895161",
   "company": {
-    "id": "ccd3d96c-83f0-41e7-a854-056c90c4a9d1",
+    "id": "99001149-b57a-4d30-a54e-c27904cac52e",
     "name": "我的 AI 公司",
     "cash": 73000.0,
     "total_earnings": 0.0,
@@ -12,7 +12,7 @@
     "office_level": 1,
     "agents": [
       {
-        "id": "eb9fa89a-ef43-44e2-8b15-d73a6ed2d256",
+        "id": "fa1c6e53-8ff3-4219-b4e1-c82ee4092770",
         "name": "小王",
         "role": "初级程序员",
         "level": 1,
@@ -27,12 +27,12 @@
         "salary": 1000,
         "status": "idle",
         "current_project": null,
-        "hired_at": "2026-04-24T07:04:20.507156",
+        "hired_at": "2026-04-25T07:41:39.895062",
         "projects_completed": 0,
         "total_earnings": 0.0
       },
       {
-        "id": "19bec92e-945b-4f6e-a925-1bbec49f31a5",
+        "id": "c3e35e0a-4e43-4f2b-ae52-3fd3f3a685ad",
         "name": "小李",
         "role": "初级程序员",
         "level": 1,
@@ -47,28 +47,47 @@
         "salary": 1000,
         "status": "idle",
         "current_project": null,
-        "hired_at": "2026-04-24T07:04:20.507166",
+        "hired_at": "2026-04-25T07:41:39.895065",
         "projects_completed": 0,
         "total_earnings": 0.0
       }
     ],
     "projects": [
       {
-        "id": "ac948723-4244-4a06-9006-fc3a189c97c3",
-        "name": "网站开发 #c294",
+        "id": "49631fa4-b1b8-4e39-8a59-742d4a751ddd",
+        "name": "网站开发 #d433",
         "type": "网站开发",
         "description": "",
         "difficulty": 1,
         "deadline_days": 3,
         "days_remaining": 3,
-        "reward": 12634,
+        "reward": 16837,
         "progress": 0,
         "quality": 0,
         "status": "available",
         "assigned_agents": [],
         "client_name": "未知客户",
         "client_satisfaction": 0,
-        "created_at": "2026-04-24T07:04:20.507197",
+        "created_at": "2026-04-25T07:41:39.895076",
+        "started_at": null,
+        "completed_at": null
+      },
+      {
+        "id": "05df4d7b-a501-4153-95cf-332833d7141f",
+        "name": "游戏开发 #7a0e",
+        "type": "游戏开发",
+        "description": "",
+        "difficulty": 5,
+        "deadline_days": 15,
+        "days_remaining": 15,
+        "reward": 91105,
+        "progress": 0,
+        "quality": 0,
+        "status": "available",
+        "assigned_agents": [],
+        "client_name": "未知客户",
+        "client_satisfaction": 0,
+        "created_at": "2026-04-25T07:41:39.895152",
         "started_at": null,
         "completed_at": null
       }
@@ -78,6 +97,7 @@
     "projects_failed": 0,
     "total_days": 1,
     "bond_days": 1,
+    "bond_pairs": [],
     "equipments": [],
     "brand_level": 0.0,
     "last_brand_check_day": 0,
@@ -89,8 +109,8 @@
     "last_dividend_day": 0,
     "last_dividend_earnings": 0.0,
     "last_dividend_expenses": 0.0,
-    "created_at": "2026-04-24T07:04:20.507110",
-    "last_updated": "2026-04-24T07:04:20.507338"
+    "created_at": "2026-04-25T07:41:39.895055",
+    "last_updated": "2026-04-25T07:41:39.895120"
   },
   "metadata": {
     "day": 1,

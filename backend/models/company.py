@@ -46,6 +46,9 @@ class Company:
     # 羁绊系统 (Phase 3.2 新增)
     bond_days: int = 0  # 羁绊累积天数
     
+    # 双人羁绊对 (Phase 3.2 新增)
+    bond_pairs: List[dict] = field(default_factory=list)  # [{"emp1": "id", "emp2": "id", "days": 0}]
+    
     # 羁绊等级配置
     BOND_TIERS = {
         0: {"name": "陌生", "quality_bonus": 0.0, "min_days": 0},
@@ -53,6 +56,14 @@ class Company:
         2: {"name": "默契", "quality_bonus": 0.10, "min_days": 31},
         3: {"name": "信赖", "quality_bonus": 0.15, "min_days": 61},
         4: {"name": "灵魂伴侣", "quality_bonus": 0.20, "min_days": 100},
+    }
+    
+    # 双人羁绊等级配置
+    PAIR_BOND_TIERS = {
+        0: {"name": "陌生人", "quality_bonus": 0.0, "salary_discount": 0.0, "min_days": 0},
+        1: {"name": "同事", "quality_bonus": 0.03, "salary_discount": 0.0, "min_days": 30},
+        2: {"name": "好友", "quality_bonus": 0.05, "salary_discount": 0.05, "min_days": 60},
+        3: {"name": "知己", "quality_bonus": 0.08, "salary_discount": 0.10, "min_days": 90},
     }
     
     # Phase 3.3: 设备系统
@@ -94,6 +105,7 @@ class Company:
             "projects_failed": self.projects_failed,
             "total_days": self.total_days,
             "bond_days": self.bond_days,
+            "bond_pairs": self.bond_pairs,
             "equipments": self.equipments,
             "brand_level": self.brand_level,
             "last_brand_check_day": self.last_brand_check_day,
@@ -130,6 +142,7 @@ class Company:
         company.created_at = datetime.fromisoformat(data["created_at"]) if "created_at" in data else datetime.now()
         company.last_updated = datetime.fromisoformat(data["last_updated"]) if "last_updated" in data else datetime.now()
         company.bond_days = data.get("bond_days", 0)
+        company.bond_pairs = data.get("bond_pairs", [])
         company.equipments = data.get("equipments", [])
         company.brand_level = data.get("brand_level", 0.0)
         company.last_brand_check_day = data.get("last_brand_check_day", 0)
@@ -418,6 +431,85 @@ class Company:
     
     # ========== 羁绊系统 ==========
     
+    def get_pair_bond(self, emp1_id: str, emp2_id: str) -> dict:
+        """获取两个员工之间的羁绊"""
+        for pair in self.bond_pairs:
+            if (pair["emp1"] == emp1_id and pair["emp2"] == emp2_id) or \
+               (pair["emp1"] == emp2_id and pair["emp2"] == emp1_id):
+                days = pair["days"]
+                tier = 0
+                for t in sorted(self.PAIR_BOND_TIERS.keys(), reverse=True):
+                    if days >= self.PAIR_BOND_TIERS[t]["min_days"]:
+                        tier = t
+                        break
+                return {
+                    "emp1": emp1_id,
+                    "emp2": emp2_id,
+                    "days": days,
+                    "tier": tier,
+                    "name": self.PAIR_BOND_TIERS[tier]["name"],
+                    "quality_bonus": self.PAIR_BOND_TIERS[tier]["quality_bonus"],
+                    "salary_discount": self.PAIR_BOND_TIERS[tier]["salary_discount"],
+                    "next_tier": min(tier + 1, 3) if tier < 3 else None,
+                    "days_to_next": (
+                        self.PAIR_BOND_TIERS[tier + 1]["min_days"] - days
+                        if tier < 3
+                        else 0
+                    ),
+                }
+        return {
+            "emp1": emp1_id,
+            "emp2": emp2_id,
+            "days": 0,
+            "tier": 0,
+            "name": "陌生人",
+            "quality_bonus": 0.0,
+            "salary_discount": 0.0,
+            "next_tier": 1,
+            "days_to_next": 30,
+        }
+    
+    def update_pair_bonds(self, project_agents: List[str]) -> None:
+        """更新项目中的双人羁绊天数"""
+        for i in range(len(project_agents)):
+            for j in range(i + 1, len(project_agents)):
+                emp1 = project_agents[i]
+                emp2 = project_agents[j]
+                # 查找是否已有这对羁绊
+                found = False
+                for pair in self.bond_pairs:
+                    if (pair["emp1"] == emp1 and pair["emp2"] == emp2) or \
+                       (pair["emp1"] == emp2 and pair["emp2"] == emp1):
+                        pair["days"] += 1
+                        found = True
+                        break
+                if not found:
+                    self.bond_pairs.append({"emp1": emp1, "emp2": emp2, "days": 1})
+    
+    def get_pair_bond_quality_bonus(self, agent_ids: List[str]) -> float:
+        """获取项目中所有员工对的羁绊质量加成（取最大值）"""
+        max_bonus = 0.0
+        for i in range(len(agent_ids)):
+            for j in range(i + 1, len(agent_ids)):
+                pair = self.get_pair_bond(agent_ids[i], agent_ids[j])
+                if pair["quality_bonus"] > max_bonus:
+                    max_bonus = pair["quality_bonus"]
+        return max_bonus
+    
+    def get_pair_bond_salary_discount(self) -> float:
+        """获取最大薪资减免比例"""
+        max_discount = 0.0
+        for pair in self.bond_pairs:
+            tier = 0
+            for t in sorted(self.PAIR_BOND_TIERS.keys(), reverse=True):
+                if pair["days"] >= self.PAIR_BOND_TIERS[t]["min_days"]:
+                    tier = t
+                    break
+            discount = self.PAIR_BOND_TIERS[tier]["salary_discount"]
+            if discount > max_discount:
+                max_discount = discount
+        return max_discount
+    
     def get_bond_tier(self) -> dict:
         """获取当前羁绊等级"""
         tier = 0
@@ -460,6 +552,11 @@ class Company:
         bond_tier = self.get_bond_tier()
         if bond_tier["quality_bonus"] > 0:
             reward *= (1 + bond_tier["quality_bonus"])
+        
+        # 双人羁绊加成（独立乘区）
+        pair_bond_bonus = self.get_pair_bond_quality_bonus(project.assigned_agents)
+        if pair_bond_bonus > 0:
+            reward *= (1 + pair_bond_bonus)
         
         self.cash += reward
         self.total_earnings += reward
@@ -520,6 +617,11 @@ class Company:
                 daily_progress = int(daily_progress * (1 + equipment_bonus))
             
             project.update_progress(daily_progress)
+        
+        # 更新双人羁绊（对所有活跃员工对，不依赖项目状态）
+        working_agents = [a.id for a in self.agents if a.status == "working"]
+        if len(working_agents) >= 2:
+            self.update_pair_bonds(working_agents)
         
         # Phase 3.2: 更新羁绊天数
         self.bond_days += 1
