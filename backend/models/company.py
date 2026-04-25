@@ -83,6 +83,23 @@ class Company:
     last_dividend_earnings: float = 0.0  # 上次分红时的总收入
     last_dividend_expenses: float = 0.0  # 上次分红时的总支出
     
+    # Phase 3.4: 成就系统
+    achievements: List[str] = field(default_factory=list)
+    achievement_progress: Dict[str, dict] = field(default_factory=dict)
+    
+    # 成就追踪辅助字段
+    completed_project_types: set = field(default_factory=set)
+    high_quality_count: int = 0
+    max_single_reward: float = 0.0
+    consecutive_completions: int = 0
+    total_fired: int = 0
+    equipment_total_spent: float = 0.0
+    days_without_resignation: int = 0
+    had_level_1_agent: bool = False
+    _last_project_quality: float = 0.0
+    _last_project_early: bool = False
+    _last_project_buzzer: bool = False
+    
     # 时间记录
     created_at: datetime = field(default_factory=datetime.now)
     last_updated: datetime = field(default_factory=datetime.now)
@@ -117,6 +134,16 @@ class Company:
             "last_dividend_day": self.last_dividend_day,
             "last_dividend_earnings": self.last_dividend_earnings,
             "last_dividend_expenses": self.last_dividend_expenses,
+            "achievements": self.achievements,
+            "achievement_progress": self.achievement_progress,
+            "completed_project_types": list(self.completed_project_types),
+            "high_quality_count": self.high_quality_count,
+            "max_single_reward": self.max_single_reward,
+            "consecutive_completions": self.consecutive_completions,
+            "total_fired": self.total_fired,
+            "equipment_total_spent": self.equipment_total_spent,
+            "days_without_resignation": self.days_without_resignation,
+            "had_level_1_agent": self.had_level_1_agent,
             "created_at": self.created_at.isoformat(),
             "last_updated": self.last_updated.isoformat(),
         }
@@ -154,6 +181,16 @@ class Company:
         company.last_dividend_day = data.get("last_dividend_day", 0)
         company.last_dividend_earnings = data.get("last_dividend_earnings", 0.0)
         company.last_dividend_expenses = data.get("last_dividend_expenses", 0.0)
+        company.achievements = data.get("achievements", [])
+        company.achievement_progress = data.get("achievement_progress", {})
+        company.completed_project_types = set(data.get("completed_project_types", []))
+        company.high_quality_count = data.get("high_quality_count", 0)
+        company.max_single_reward = data.get("max_single_reward", 0.0)
+        company.consecutive_completions = data.get("consecutive_completions", 0)
+        company.total_fired = data.get("total_fired", 0)
+        company.equipment_total_spent = data.get("equipment_total_spent", 0.0)
+        company.days_without_resignation = data.get("days_without_resignation", 0)
+        company.had_level_1_agent = data.get("had_level_1_agent", False)
         return company
     
     def to_json(self) -> str:
@@ -561,6 +598,20 @@ class Company:
         self.cash += reward
         self.total_earnings += reward
         self.projects_completed += 1
+        
+        # 成就追踪
+        self.completed_project_types.add(project.type)
+        self._last_project_quality = project.quality
+        self.max_single_reward = max(self.max_single_reward, reward)
+        if project.quality >= 90:
+            self.high_quality_count += 1
+        self.consecutive_completions += 1
+        
+        # 检查提前完成和压哨完成
+        if project.days_remaining > project.deadline_days * 0.5:
+            self._last_project_early = True
+        if project.days_remaining <= 1:
+            self._last_project_buzzer = True
         
         # 更新 Agent 统计
         for agent in agents:
