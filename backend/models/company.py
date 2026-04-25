@@ -588,6 +588,12 @@ class Company:
         
         # 支出
         daily_salary = self.get_agent_daily_salary()
+        
+        # 双人羁绊薪资减免
+        salary_discount = self.get_pair_bond_salary_discount()
+        if salary_discount > 0:
+            daily_salary = int(daily_salary * (1 - salary_discount))
+        
         office_rent = self.get_office_rent()
         daily_expenses = daily_salary + office_rent
         
