@@ -612,3 +612,179 @@ window.runMarketing = runMarketing;
 window.maintainBrand = maintainBrand;
 window.applyFunding = applyFunding;
 window.buybackEquity = buybackEquity;
+
+// ========== 成就系统 ==========
+
+let allAchievements = [];
+let currentCategory = 'all';
+let currentStatus = 'all';
+
+// 加载成就列表
+async function loadAchievements() {
+    try {
+        const response = await fetch('/api/achievements');
+        const data = await response.json();
+        allAchievements = data.achievements || [];
+        
+        // 更新概览
+        document.getElementById('ach-unlocked-count').textContent = data.unlocked_count || 0;
+        document.getElementById('ach-total-count').textContent = data.total_count || 52;
+        const rate = data.total_count > 0 ? Math.round((data.unlocked_count / data.total_count) * 100) : 0;
+        document.getElementById('ach-rate').textContent = rate + '%';
+        document.getElementById('ach-progress-text').textContent = `${data.unlocked_count || 0} / ${data.total_count || 52}`;
+        document.getElementById('ach-progress-fill').style.width = rate + '%';
+        
+        renderAchievements();
+    } catch (e) {
+        console.error('加载成就失败:', e);
+    }
+}
+
+// 渲染成就列表
+function renderAchievements() {
+    const container = document.getElementById('achievement-list');
+    const emptyState = document.getElementById('achievement-empty');
+    
+    let filtered = allAchievements.filter(a => {
+        // 分类筛选
+        if (currentCategory !== 'all' && a.category !== currentCategory) return false;
+        // 状态筛选
+        if (currentStatus === 'unlocked' && !a.unlocked) return false;
+        if (currentStatus === 'locked' && a.unlocked) return false;
+        return true;
+    });
+    
+    if (filtered.length === 0) {
+        container.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+    }
+    
+    emptyState.style.display = 'none';
+    container.innerHTML = filtered.map(a => renderAchievementCard(a)).join('');
+}
+
+// 渲染单个成就卡片
+function renderAchievementCard(a) {
+    const isHidden = a.category === '隐藏';
+    
+    if (a.unlocked) {
+        return `
+            <div class="achievement-card unlocked" data-category="${a.category}" data-id="${a.id}">
+                <div class="achievement-icon">${a.icon}</div>
+                <div class="achievement-info">
+                    <div class="achievement-name">${a.name}</div>
+                    <div class="achievement-desc">${a.description}</div>
+                    <div class="achievement-meta">
+                        <span class="achievement-category">${getCategoryIcon(a.category)} ${a.category}</span>
+                    </div>
+                </div>
+                <div class="achievement-badge">✅</div>
+            </div>
+        `;
+    } else {
+        const name = isHidden ? '???' : a.name;
+        const desc = isHidden ? '这是一个秘密...' : a.description;
+        const icon = isHidden ? '❓' : '🔒';
+        
+        return `
+            <div class="achievement-card locked ${isHidden ? 'hidden-achievement' : ''}" data-category="${a.category}" data-id="${a.id}">
+                <div class="achievement-icon locked-icon">${icon}</div>
+                <div class="achievement-info">
+                    <div class="achievement-name locked-name">${name}</div>
+                    <div class="achievement-desc locked-desc">${desc}</div>
+                </div>
+                <div class="achievement-badge locked-badge">${isHidden ? '❓' : '🔒'}</div>
+            </div>
+        `;
+    }
+}
+
+// 获取分类图标
+function getCategoryIcon(category) {
+    const icons = {
+        '成长': '🎯',
+        '项目': '💎',
+        '团队': '👥',
+        '设备': '🔧',
+        '品牌': '🏷️',
+        '融资': '💹',
+        '财务': '💰',
+        '隐藏': '❓'
+    };
+    return icons[category] || '🏆';
+}
+
+// 分类筛选
+function filterAchievements(category, btn) {
+    currentCategory = category;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderAchievements();
+}
+
+// 状态筛选
+function filterStatus(status, btn) {
+    currentStatus = status;
+    document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderAchievements();
+}
+
+// 成就解锁弹窗
+function showAchievementPopup(achievement) {
+    const popup = document.createElement('div');
+    popup.className = 'achievement-popup';
+    popup.innerHTML = `
+        <div class="popup-title">🏆 成就解锁！</div>
+        <div class="popup-name">${achievement.icon} ${achievement.name}</div>
+        <div class="popup-desc">${achievement.description}</div>
+    `;
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 4000);
+}
+
+// 检查新成就
+async function checkAchievements() {
+    try {
+        const response = await fetch('/api/achievements/check', { method: 'POST' });
+        const data = await response.json();
+        
+        if (data.new_unlocks && data.new_unlocks.length > 0) {
+            data.new_unlocks.forEach(aid => {
+                const achievement = allAchievements.find(a => a.id === aid);
+                if (achievement) {
+                    showAchievementPopup(achievement);
+                    achievement.unlocked = true;
+                }
+            });
+            // 更新概览
+            const total = allAchievements.length;
+            document.getElementById('ach-unlocked-count').textContent = data.total_unlocked;
+            const rate = Math.round((data.total_unlocked / total) * 100);
+            document.getElementById('ach-rate').textContent = rate + '%';
+            document.getElementById('ach-progress-text').textContent = `${data.total_unlocked} / ${total}`;
+            document.getElementById('ach-progress-fill').style.width = rate + '%';
+            renderAchievements();
+        }
+    } catch (e) {
+        console.error('检查成就失败:', e);
+    }
+}
+
+// 扩展 showTab 以支持成就标签页
+const _origShowTab = window.showTab;
+window.showTab = function(tabName) {
+    if (_origShowTab) _origShowTab(tabName);
+    if (tabName === 'achievements') {
+        loadAchievements();
+    }
+};
+
+// 导出全局函数
+window.loadAchievements = loadAchievements;
+window.renderAchievements = renderAchievements;
+window.filterAchievements = filterAchievements;
+window.filterStatus = filterStatus;
+window.showAchievementPopup = showAchievementPopup;
+window.checkAchievements = checkAchievements;

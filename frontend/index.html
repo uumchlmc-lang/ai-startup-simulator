@@ -165,6 +165,72 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 成就面板 -->
+            <div id="tab-achievements" class="tab-content">
+                <h2>🏆 成就系统</h2>
+                <p class="tab-desc">完成挑战解锁成就，展示你的创业历程。</p>
+
+                <!-- 成就概览 -->
+                <div class="achievement-overview">
+                    <div class="overview-stat achievement-stat">
+                        <span class="stat-icon">🏆</span>
+                        <span class="stat-number" id="ach-unlocked-count">0</span>
+                        <span class="stat-label">已解锁</span>
+                    </div>
+                    <div class="overview-stat achievement-stat">
+                        <span class="stat-icon">📊</span>
+                        <span class="stat-number" id="ach-total-count">52</span>
+                        <span class="stat-label">总成就</span>
+                    </div>
+                    <div class="overview-stat achievement-stat">
+                        <span class="stat-icon">📈</span>
+                        <span class="stat-number" id="ach-rate">0%</span>
+                        <span class="stat-label">解锁率</span>
+                    </div>
+                </div>
+
+                <!-- 成就进度条 -->
+                <div class="achievement-progress-bar">
+                    <div class="progress-label">
+                        <span>总进度</span>
+                        <span id="ach-progress-text">0 / 52</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="ach-progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- 分类筛选 -->
+                <div class="achievement-filters">
+                    <button class="filter-btn active" data-category="all" onclick="filterAchievements('all', this)">全部</button>
+                    <button class="filter-btn" data-category="成长" onclick="filterAchievements('成长', this)">🎯 成长</button>
+                    <button class="filter-btn" data-category="项目" onclick="filterAchievements('项目', this)">💎 项目</button>
+                    <button class="filter-btn" data-category="团队" onclick="filterAchievements('团队', this)">👥 团队</button>
+                    <button class="filter-btn" data-category="设备" onclick="filterAchievements('设备', this)">🔧 设备</button>
+                    <button class="filter-btn" data-category="品牌" onclick="filterAchievements('品牌', this)">🏷️ 品牌</button>
+                    <button class="filter-btn" data-category="融资" onclick="filterAchievements('融资', this)">💹 融资</button>
+                    <button class="filter-btn" data-category="财务" onclick="filterAchievements('财务', this)">💰 财务</button>
+                    <button class="filter-btn" data-category="隐藏" onclick="filterAchievements('隐藏', this)">❓ 隐藏</button>
+                </div>
+
+                <!-- 显示筛选 -->
+                <div class="achievement-status-filters">
+                    <button class="status-btn active" data-status="all" onclick="filterStatus('all', this)">全部</button>
+                    <button class="status-btn" data-status="unlocked" onclick="filterStatus('unlocked', this)">✅ 已解锁</button>
+                    <button class="status-btn" data-status="locked" onclick="filterStatus('locked', this)">🔒 未解锁</button>
+                </div>
+
+                <!-- 成就列表 -->
+                <div id="achievement-list" class="achievement-grid"></div>
+
+                <!-- 空状态 -->
+                <div id="achievement-empty" class="empty-state" style="display:none;">
+                    <div class="empty-icon">🏆</div>
+                    <p>还没有解锁任何成就</p>
+                    <p class="empty-hint">继续游戏，完成挑战来解锁成就！</p>
+                </div>
+            </div>
         </div>
 
         <!-- 游戏结束弹窗 -->
