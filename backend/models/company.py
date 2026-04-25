@@ -240,9 +240,9 @@ class Company:
     EQUIPMENT_CONFIG = {
         "高速网络": {"cost": 10000, "office_required": 1, "bonus": 0.05},
         "开发者工作站": {"cost": 25000, "office_required": 2, "bonus": 0.10, "programmer_bonus": 0.10},
-        "云服务器集群": {"cost": 50000, "office_required": 3, "bonus": 0.10},
+        "云服务器集群": {"cost": 35000, "office_required": 3, "bonus": 0.10},
         "测试实验室": {"cost": 35000, "office_required": 3, "bonus": 0.05},
-        "AI 训练集群": {"cost": 150000, "office_required": 4, "bonus": 0.20},
+        "AI 训练集群": {"cost": 100000, "office_required": 4, "bonus": 0.20},
     }
     
     def buy_equipment(self, equipment_name: str) -> dict:
@@ -287,8 +287,8 @@ class Company:
         1: {"name": "地方知名", "daily_cost": 500, "reward_mult": 1.1, "good_project_bonus": 0.10},
         2: {"name": "行业新锐", "daily_cost": 1000, "reward_mult": 1.2, "good_project_bonus": 0.20},
         3: {"name": "知名公司", "daily_cost": 2000, "reward_mult": 1.3, "good_project_bonus": 0.30},
-        4: {"name": "行业巨头", "daily_cost": 3500, "reward_mult": 1.5, "good_project_bonus": 0.40},
-        5: {"name": "科技帝国", "daily_cost": 5000, "reward_mult": 2.0, "good_project_bonus": 0.50},
+        4: {"name": "行业巨头", "daily_cost": 2500, "reward_mult": 1.5, "good_project_bonus": 0.40},
+        5: {"name": "科技帝国", "daily_cost": 3500, "reward_mult": 2.0, "good_project_bonus": 0.50},
     }
     
     MARKETING_CONFIG = {
@@ -357,7 +357,7 @@ class Company:
     FUNDING_CONFIG = {
         "种子轮": {"amount": 100000, "equity": 0.10, "min_day": 10, "min_reputation": 0, "dividend_rate": 0.05},
         "天使轮": {"amount": 300000, "equity": 0.15, "min_day": 30, "min_reputation": 3.5, "dividend_rate": 0.08},
-        "A 轮": {"amount": 800000, "equity": 0.20, "min_day": 60, "min_reputation": 4.0, "dividend_rate": 0.10},
+        "A 轮": {"amount": 800000, "equity": 0.20, "min_day": 60, "min_reputation": 4.0, "dividend_rate": 0.08},
         "B 轮": {"amount": 2000000, "equity": 0.15, "min_day": 100, "min_reputation": 4.5, "dividend_rate": 0.12},
         "IPO": {"amount": 5000000, "equity": 0.10, "min_day": 150, "min_reputation": 4.8, "dividend_rate": 0.15},
     }
