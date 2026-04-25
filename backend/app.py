@@ -11,7 +11,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from services import get_current_game, reset_game
-from routes import company_routes, agent_routes, project_routes, achievement_routes
+from routes import company_routes, agent_routes, project_routes, achievement_routes, difficulty_routes
 
 
 def create_app(config: dict = None):
@@ -34,6 +34,7 @@ def create_app(config: dict = None):
     app.register_blueprint(agent_routes.bp, url_prefix="/api/agents")
     app.register_blueprint(project_routes.bp, url_prefix="/api/projects")
     app.register_blueprint(achievement_routes.bp, url_prefix="/api/achievements")
+    app.register_blueprint(difficulty_routes.bp, url_prefix="/api/difficulty")
     
     # 根路由 - 提供前端页面
     @app.route("/")

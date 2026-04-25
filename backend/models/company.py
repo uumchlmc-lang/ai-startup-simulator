@@ -21,6 +21,35 @@ class Company:
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     name: str = "AI 创业公司"
     
+    # 难度系统 (Phase 3.5 新增)
+    difficulty: str = "normal"  # easy/normal/hard/custom
+    difficulty_settings: Dict[str, float] = field(default_factory=dict)  # 自定义难度参数
+    
+    # 难度配置 (Phase 3.5 新增)
+    DIFFICULTY_CONFIG = {
+        "easy": {
+            "initial_cash": 100000,
+            "reward_multiplier": 1.3,
+            "salary_multiplier": 0.8,
+            "equipment_price_multiplier": 0.8,
+            "brand_maintenance_multiplier": 0.7,
+        },
+        "normal": {
+            "initial_cash": 75000,
+            "reward_multiplier": 1.0,
+            "salary_multiplier": 1.0,
+            "equipment_price_multiplier": 1.0,
+            "brand_maintenance_multiplier": 1.0,
+        },
+        "hard": {
+            "initial_cash": 35000,
+            "reward_multiplier": 0.7,
+            "salary_multiplier": 1.3,
+            "equipment_price_multiplier": 1.3,
+            "brand_maintenance_multiplier": 1.3,
+        },
+    }
+    
     # 财务
     cash: float = 75000.0       # 现金 (初始$75k)
     total_earnings: float = 0.0  # 总收入
@@ -144,6 +173,8 @@ class Company:
             "equipment_total_spent": self.equipment_total_spent,
             "days_without_resignation": self.days_without_resignation,
             "had_level_1_agent": self.had_level_1_agent,
+            "difficulty": self.difficulty,
+            "difficulty_settings": self.difficulty_settings,
             "created_at": self.created_at.isoformat(),
             "last_updated": self.last_updated.isoformat(),
         }
@@ -191,6 +222,8 @@ class Company:
         company.equipment_total_spent = data.get("equipment_total_spent", 0.0)
         company.days_without_resignation = data.get("days_without_resignation", 0)
         company.had_level_1_agent = data.get("had_level_1_agent", False)
+        company.difficulty = data.get("difficulty", "normal")
+        company.difficulty_settings = data.get("difficulty_settings", {})
         return company
     
     def to_json(self) -> str:
@@ -225,7 +258,16 @@ class Company:
     
     def get_agent_daily_salary(self) -> int:
         """计算每日总薪资"""
-        return sum(a.salary for a in self.agents)
+        base_salary = sum(a.salary for a in self.agents)
+        # 应用难度倍率
+        config = self.get_difficulty_config()
+        return int(base_salary * config.get("salary_multiplier", 1.0))
+    
+    def get_difficulty_config(self) -> dict:
+        """获取当前难度配置"""
+        if self.difficulty == "custom" and self.difficulty_settings:
+            return self.difficulty_settings
+        return self.DIFFICULTY_CONFIG.get(self.difficulty, self.DIFFICULTY_CONFIG["normal"])
     
     # ========== 项目管理 ==========
     
@@ -294,11 +336,16 @@ class Company:
         if self.office_level < config["office_required"]:
             return {"success": False, "error": f"办公室等级不足 (需要 Lv.{config['office_required']})"}
         
-        if self.cash < config["cost"]:
+        # 应用难度设备价格倍率
+        diff_config = self.get_difficulty_config()
+        cost = int(config["cost"] * diff_config.get("equipment_price_multiplier", 1.0))
+        
+        if self.cash < cost:
             return {"success": False, "error": "现金不足"}
         
-        self.cash -= config["cost"]
+        self.cash -= cost
         self.equipments.append(equipment_name)
+        self.equipment_total_spent += cost
         return {"success": True, "equipment": equipment_name}
     
     def get_equipment_bonus(self) -> float:
@@ -370,6 +417,11 @@ class Company:
     def maintain_brand(self, days: int = 30) -> dict:
         """品牌维护续费"""
         daily_cost = self.get_brand_daily_cost()
+        
+        # 应用难度品牌维护费倍率
+        diff_config = self.get_difficulty_config()
+        daily_cost = int(daily_cost * diff_config.get("brand_maintenance_multiplier", 1.0))
+        
         total_cost = daily_cost * days
         
         if daily_cost == 0:
@@ -579,6 +631,10 @@ class Company:
         
         # 完成项目
         reward = project.complete()
+        
+        # 应用难度报酬倍率
+        diff_config = self.get_difficulty_config()
+        reward *= diff_config.get("reward_multiplier", 1.0)
         
         # 品牌+设备总加成（加算，上限 2.5x）
         total_mult = self.get_total_project_multiplier()
