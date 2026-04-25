@@ -669,3 +669,224 @@ body {
     from { transform: translateX(0); opacity: 1; }
     to { transform: translateX(100%); opacity: 0; }
 }
+
+/* ========== 难度选择弹窗 ========== */
+
+.difficulty-modal {
+    max-width: 900px;
+    width: 90%;
+}
+
+.modal-subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 20px;
+}
+
+/* 难度卡片 */
+.difficulty-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.difficulty-card {
+    background: white;
+    border: 2px solid #dee2e6;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.difficulty-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.difficulty-card.selected {
+    border-color: #3498db;
+    background: #f0f7ff;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.difficulty-card.easy.selected {
+    border-color: #2ecc71;
+    background: #f0fff4;
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+}
+
+.difficulty-card.hard.selected {
+    border-color: #e74c3c;
+    background: #fff0f0;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+}
+
+.difficulty-icon {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.difficulty-name {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.difficulty-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    background: #f0f0f0;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.difficulty-tag.recommended {
+    background: #3498db;
+    color: white;
+}
+
+.difficulty-desc {
+    font-size: 0.85em;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+.difficulty-params {
+    text-align: left;
+    font-size: 0.8em;
+}
+
+.param-row {
+    padding: 4px 0;
+    color: #666;
+}
+
+.param-row.positive {
+    color: #2ecc71;
+}
+
+.param-row.negative {
+    color: #e74c3c;
+}
+
+/* 自定义难度 */
+.custom-toggle {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.btn-outline {
+    padding: 8px 20px;
+    border: 2px solid #3498db;
+    border-radius: 20px;
+    background: white;
+    color: #3498db;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-outline:hover {
+    background: #3498db;
+    color: white;
+}
+
+.custom-panel {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.custom-panel h3 {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.custom-hint {
+    text-align: center;
+    color: #666;
+    font-size: 0.85em;
+    margin-bottom: 20px;
+}
+
+.custom-sliders {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.slider-group {
+    background: white;
+    border-radius: 8px;
+    padding: 12px 15px;
+}
+
+.slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.slider-header label {
+    font-size: 0.9em;
+    color: #333;
+}
+
+.slider-value {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #3498db;
+}
+
+.slider-group input[type="range"] {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #dee2e6;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.slider-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #3498db;
+    cursor: pointer;
+}
+
+.slider-range {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75em;
+    color: #999;
+    margin-top: 4px;
+}
+
+/* 模态按钮 */
+.modal-actions {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .difficulty-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .difficulty-modal {
+        width: 95%;
+        padding: 15px;
+    }
+}

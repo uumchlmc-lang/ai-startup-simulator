@@ -788,3 +788,148 @@ window.filterAchievements = filterAchievements;
 window.filterStatus = filterStatus;
 window.showAchievementPopup = showAchievementPopup;
 window.checkAchievements = checkAchievements;
+
+// ========== 难度选择系统 ==========
+
+let selectedDifficulty = 'normal';
+let isCustomDifficulty = false;
+
+// 显示难度选择弹窗
+function showDifficultySelect() {
+    document.getElementById('difficulty-select').style.display = 'flex';
+}
+
+// 隐藏难度选择弹窗
+function hideDifficultySelect() {
+    document.getElementById('difficulty-select').style.display = 'none';
+}
+
+// 选择预设难度
+function selectDifficulty(mode, card) {
+    selectedDifficulty = mode;
+    isCustomDifficulty = false;
+    
+    // 更新选中状态
+    document.querySelectorAll('.difficulty-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    
+    // 隐藏自定义面板
+    document.getElementById('custom-difficulty-panel').style.display = 'none';
+}
+
+// 切换自定义难度
+function toggleCustomDifficulty() {
+    const panel = document.getElementById('custom-difficulty-panel');
+    const btn = document.getElementById('custom-toggle-btn');
+    
+    if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        btn.textContent = '⚙️ 隐藏自定义';
+        isCustomDifficulty = true;
+        selectedDifficulty = 'custom';
+        
+        // 取消预设难度选中
+        document.querySelectorAll('.difficulty-card').forEach(c => c.classList.remove('selected'));
+    } else {
+        panel.style.display = 'none';
+        btn.textContent = '⚙️ 自定义难度';
+        isCustomDifficulty = false;
+    }
+}
+
+// 更新自定义难度预览
+function updateCustomDifficulty() {
+    const cash = document.getElementById('custom-cash').value;
+    const reward = document.getElementById('custom-reward').value;
+    const salary = document.getElementById('custom-salary').value;
+    const equipment = document.getElementById('custom-equipment').value;
+    const brand = document.getElementById('custom-brand').value;
+    
+    document.getElementById('cash-value').textContent = '$' + parseInt(cash).toLocaleString();
+    document.getElementById('reward-value').textContent = '×' + reward;
+    document.getElementById('salary-value').textContent = '×' + salary;
+    document.getElementById('equipment-value').textContent = '×' + equipment;
+    document.getElementById('brand-value').textContent = '×' + brand;
+}
+
+// 确认难度选择
+async function confirmDifficulty() {
+    try {
+        let mode = selectedDifficulty;
+        let body = {};
+        
+        if (mode === 'custom') {
+            body = {
+                initial_cash: parseInt(document.getElementById('custom-cash').value),
+                reward_multiplier: parseFloat(document.getElementById('custom-reward').value),
+                salary_multiplier: parseFloat(document.getElementById('custom-salary').value),
+                equipment_price_multiplier: parseFloat(document.getElementById('custom-equipment').value),
+                brand_maintenance_multiplier: parseFloat(document.getElementById('custom-brand').value),
+            };
+        }
+        
+        const response = await fetch(`/api/difficulty/${mode}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(body)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            hideDifficultySelect();
+            showNotification(`✅ 难度已设置: ${getDifficultyName(mode)}`, 'success');
+            
+            // 开始新游戏
+            await startNewGame();
+        } else {
+            showNotification(`❌ ${data.error || '设置难度失败'}`, 'error');
+        }
+    } catch (e) {
+        console.error('设置难度失败:', e);
+        showNotification('❌ 设置难度失败', 'error');
+    }
+}
+
+// 获取难度名称
+function getDifficultyName(mode) {
+    const names = {
+        'easy': '简单',
+        'normal': '普通',
+        'hard': '困难',
+        'custom': '自定义'
+    };
+    return names[mode] || mode;
+}
+
+// 修改启动流程：无存档时显示难度选择
+const _origStartNewGame = window.startNewGame;
+window.startNewGame = async function() {
+    // 先检查是否有存档
+    const loaded = await api.loadGame();
+    if (!loaded || !loaded.success) {
+        // 无存档，显示难度选择
+        showDifficultySelect();
+        return;
+    }
+    
+    // 有存档，加载游戏
+    if (loaded.success) {
+        console.log('✅ 游戏已加载');
+        updateUI(loaded.company);
+        setTimeout(() => {
+            updateAgentsList();
+            updateProjectsList();
+        }, 500);
+        showNotification('🎮 欢迎来到 AI 创业模拟器！', 'info');
+    }
+};
+
+// 导出全局函数
+window.showDifficultySelect = showDifficultySelect;
+window.hideDifficultySelect = hideDifficultySelect;
+window.selectDifficulty = selectDifficulty;
+window.toggleCustomDifficulty = toggleCustomDifficulty;
+window.updateCustomDifficulty = updateCustomDifficulty;
+window.confirmDifficulty = confirmDifficulty;
+window.getDifficultyName = getDifficultyName;

@@ -241,6 +241,154 @@
                 <button class="btn btn-primary" onclick="newGame()">重新开始</button>
             </div>
         </div>
+
+        <!-- 难度选择弹窗 -->
+        <div id="difficulty-select" class="modal" style="display:none;">
+            <div class="modal-content difficulty-modal">
+                <h2>🎮 选择难度</h2>
+                <p class="modal-subtitle">难度影响初始资金、报酬、薪资等参数。选择后不可更改。</p>
+
+                <!-- 预设难度卡片 -->
+                <div class="difficulty-cards">
+                    <!-- 简单 -->
+                    <div class="difficulty-card easy" onclick="selectDifficulty('easy', this)">
+                        <div class="difficulty-icon">😊</div>
+                        <div class="difficulty-name">简单</div>
+                        <div class="difficulty-tag">轻松创业</div>
+                        <div class="difficulty-desc">适合新手玩家，更多容错空间</div>
+                        <div class="difficulty-params">
+                            <div class="param-row positive">💰 初始资金 $100,000</div>
+                            <div class="param-row positive">📈 报酬 ×1.3</div>
+                            <div class="param-row positive">💵 薪资 ×0.8</div>
+                            <div class="param-row positive">🔧 设备价格 ×0.8</div>
+                            <div class="param-row positive">🏷️ 维护费 ×0.7</div>
+                        </div>
+                    </div>
+
+                    <!-- 普通 -->
+                    <div class="difficulty-card normal selected" onclick="selectDifficulty('normal', this)">
+                        <div class="difficulty-icon">🎯</div>
+                        <div class="difficulty-name">普通</div>
+                        <div class="difficulty-tag recommended">推荐</div>
+                        <div class="difficulty-desc">标准创业体验，平衡挑战与乐趣</div>
+                        <div class="difficulty-params">
+                            <div class="param-row">💰 初始资金 $75,000</div>
+                            <div class="param-row">📈 报酬 ×1.0</div>
+                            <div class="param-row">💵 薪资 ×1.0</div>
+                            <div class="param-row">🔧 设备价格 ×1.0</div>
+                            <div class="param-row">🏷️ 维护费 ×1.0</div>
+                        </div>
+                    </div>
+
+                    <!-- 困难 -->
+                    <div class="difficulty-card hard" onclick="selectDifficulty('hard', this)">
+                        <div class="difficulty-icon">🔥</div>
+                        <div class="difficulty-name">困难</div>
+                        <div class="difficulty-tag">硬核挑战</div>
+                        <div class="difficulty-desc">适合老手，步步惊心</div>
+                        <div class="difficulty-params">
+                            <div class="param-row negative">💰 初始资金 $35,000</div>
+                            <div class="param-row negative">📈 报酬 ×0.7</div>
+                            <div class="param-row negative">💵 薪资 ×1.3</div>
+                            <div class="param-row negative">🔧 设备价格 ×1.3</div>
+                            <div class="param-row negative">🏷️ 维护费 ×1.3</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 自定义难度切换 -->
+                <div class="custom-toggle">
+                    <button class="btn btn-outline" id="custom-toggle-btn" onclick="toggleCustomDifficulty()">
+                        ⚙️ 自定义难度
+                    </button>
+                </div>
+
+                <!-- 自定义难度面板 -->
+                <div id="custom-difficulty-panel" class="custom-panel" style="display:none;">
+                    <h3>⚙️ 自定义参数</h3>
+                    <p class="custom-hint">拖动滑块调整参数，实时预览效果</p>
+
+                    <div class="custom-sliders">
+                        <!-- 初始资金 -->
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label>💰 初始资金</label>
+                                <span class="slider-value" id="cash-value">$75,000</span>
+                            </div>
+                            <input type="range" id="custom-cash" min="10000" max="200000" step="5000" value="75000"
+                                   oninput="updateCustomDifficulty()">
+                            <div class="slider-range">
+                                <span>$10k</span>
+                                <span>$200k</span>
+                            </div>
+                        </div>
+
+                        <!-- 报酬倍率 -->
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label>📈 报酬倍率</label>
+                                <span class="slider-value" id="reward-value">×1.0</span>
+                            </div>
+                            <input type="range" id="custom-reward" min="0.5" max="2.0" step="0.1" value="1.0"
+                                   oninput="updateCustomDifficulty()">
+                            <div class="slider-range">
+                                <span>×0.5</span>
+                                <span>×2.0</span>
+                            </div>
+                        </div>
+
+                        <!-- 薪资倍率 -->
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label>💵 薪资倍率</label>
+                                <span class="slider-value" id="salary-value">×1.0</span>
+                            </div>
+                            <input type="range" id="custom-salary" min="0.5" max="2.0" step="0.1" value="1.0"
+                                   oninput="updateCustomDifficulty()">
+                            <div class="slider-range">
+                                <span>×0.5</span>
+                                <span>×2.0</span>
+                            </div>
+                        </div>
+
+                        <!-- 设备价格倍率 -->
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label>🔧 设备价格倍率</label>
+                                <span class="slider-value" id="equipment-value">×1.0</span>
+                            </div>
+                            <input type="range" id="custom-equipment" min="0.5" max="2.0" step="0.1" value="1.0"
+                                   oninput="updateCustomDifficulty()">
+                            <div class="slider-range">
+                                <span>×0.5</span>
+                                <span>×2.0</span>
+                            </div>
+                        </div>
+
+                        <!-- 品牌维护费倍率 -->
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label>🏷️ 品牌维护费倍率</label>
+                                <span class="slider-value" id="brand-value">×1.0</span>
+                            </div>
+                            <input type="range" id="custom-brand" min="0.5" max="2.0" step="0.1" value="1.0"
+                                   oninput="updateCustomDifficulty()">
+                            <div class="slider-range">
+                                <span>×0.5</span>
+                                <span>×2.0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 确认按钮 -->
+                <div class="modal-actions">
+                    <button class="btn btn-success" id="confirm-difficulty-btn" onclick="confirmDifficulty()">
+                        🚀 开始游戏
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script type="module" src="js/api.js"></script>

@@ -1,8 +1,8 @@
 {
   "version": "1.0",
-  "saved_at": "2026-04-25T10:22:38.581268",
+  "saved_at": "2026-04-25T10:28:25.852522",
   "company": {
-    "id": "e78308a8-5fc7-4919-9e61-102f96a5230a",
+    "id": "fa78542a-62a7-4aaa-a27c-352c4def61bc",
     "name": "我的 AI 公司",
     "cash": 73000.0,
     "total_earnings": 0.0,
@@ -12,7 +12,7 @@
     "office_level": 1,
     "agents": [
       {
-        "id": "6ac086a7-eef1-4935-8251-a5a15f652e2d",
+        "id": "2c76727c-42d5-49c8-8f3f-92eb077c30a4",
         "name": "小王",
         "role": "初级程序员",
         "level": 1,
@@ -27,12 +27,12 @@
         "salary": 1000,
         "status": "idle",
         "current_project": null,
-        "hired_at": "2026-04-25T10:22:38.581035",
+        "hired_at": "2026-04-25T10:28:25.852241",
         "projects_completed": 0,
         "total_earnings": 0.0
       },
       {
-        "id": "0315b551-4ef3-46f7-b9a3-51cd7482b84c",
+        "id": "484f4eec-ef75-4a30-9720-5a458ae1e8e0",
         "name": "小李",
         "role": "初级程序员",
         "level": 1,
@@ -47,28 +47,47 @@
         "salary": 1000,
         "status": "idle",
         "current_project": null,
-        "hired_at": "2026-04-25T10:22:38.581038",
+        "hired_at": "2026-04-25T10:28:25.852244",
         "projects_completed": 0,
         "total_earnings": 0.0
       }
     ],
     "projects": [
       {
-        "id": "0b1862b6-6047-446a-9532-456fc8450813",
-        "name": "网站开发 #de5e",
+        "id": "c117f38a-b4ad-4e45-973e-8e66438e805c",
+        "name": "网站开发 #0f50",
         "type": "网站开发",
         "description": "",
         "difficulty": 1,
-        "deadline_days": 4,
-        "days_remaining": 4,
-        "reward": 9914,
+        "deadline_days": 7,
+        "days_remaining": 7,
+        "reward": 16719,
         "progress": 0,
         "quality": 0,
         "status": "available",
         "assigned_agents": [],
         "client_name": "未知客户",
         "client_satisfaction": 0,
-        "created_at": "2026-04-25T10:22:38.581047",
+        "created_at": "2026-04-25T10:28:25.852254",
+        "started_at": null,
+        "completed_at": null
+      },
+      {
+        "id": "f249c29d-d77f-4546-a529-ad9bbd774368",
+        "name": "区块链应用 #ecfa",
+        "type": "区块链应用",
+        "description": "",
+        "difficulty": 5,
+        "deadline_days": 31,
+        "days_remaining": 31,
+        "reward": 91666,
+        "progress": 0,
+        "quality": 0,
+        "status": "available",
+        "assigned_agents": [],
+        "client_name": "未知客户",
+        "client_satisfaction": 0,
+        "created_at": "2026-04-25T10:28:25.852310",
         "started_at": null,
         "completed_at": null
       }
@@ -102,8 +121,8 @@
     "had_level_1_agent": false,
     "difficulty": "normal",
     "difficulty_settings": {},
-    "created_at": "2026-04-25T10:22:38.581030",
-    "last_updated": "2026-04-25T10:22:38.581076"
+    "created_at": "2026-04-25T10:28:25.852236",
+    "last_updated": "2026-04-25T10:28:25.852285"
   },
   "metadata": {
     "day": 1,
